@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import type { PublicProfile } from '../types'
 import { getAssetUrl } from '../lib/constants'
 import {
@@ -8,21 +9,41 @@ import {
   BriefcaseIcon,
   GlobeIcon,
   GraduationIcon,
+  CloseIcon,
 } from './icons'
 
 export default function ProfileHeader({ profile }: { profile: PublicProfile }) {
   const photoUrl = getAssetUrl(profile.profile_photo || profile.profile_thumbnail)
   const fullName = [profile.first_name, profile.last_name].filter(Boolean).join(' ') || profile.username
+  const [previewOpen, setPreviewOpen] = useState(false)
+
+  useEffect(() => {
+    if (!previewOpen) return
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setPreviewOpen(false)
+    }
+    document.addEventListener('keydown', handler)
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.removeEventListener('keydown', handler)
+      document.body.style.overflow = ''
+    }
+  }, [previewOpen])
 
   return (
-    <div className="mb-10 overflow-hidden rounded-2xl border border-black/10 bg-white shadow-sm dark:border-white/10 dark:bg-ink-900">
+    <>
+      <div className="mb-10 overflow-hidden rounded-2xl border border-black/10 bg-white shadow-sm dark:border-white/10 dark:bg-ink-900">
       {/* Flat neutral cover strip */}
       <div className="h-24 bg-paper-200/70 dark:bg-gradient-to-br dark:from-ink-950 dark:to-ink-900 sm:h-28" />
 
       <div className="px-6 pb-6 sm:px-8 sm:pb-8">
         <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div className="-mt-16 flex flex-col items-center gap-4 sm:mt-0 sm:-mt-16 sm:flex-row sm:items-end">
-            <Avatar photoUrl={photoUrl} name={fullName} />
+            <Avatar
+              photoUrl={photoUrl}
+              name={fullName}
+              onClick={() => setPreviewOpen(true)}
+            />
             <div className="text-center sm:text-left">
               <h1 className="font-display text-2xl font-semibold leading-tight text-gray-900 dark:text-white sm:text-3xl">
                 {fullName}
@@ -82,16 +103,50 @@ export default function ProfileHeader({ profile }: { profile: PublicProfile }) {
         </div>
       </div>
     </div>
+
+    {previewOpen && photoUrl && (
+      <div
+        className="fixed inset-0 z-50 flex items-center justify-center p-4"
+        role="dialog"
+        aria-modal="true"
+        aria-label={`${fullName} profile photo`}
+        onClick={() => setPreviewOpen(false)}
+      >
+        <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
+        <button
+          onClick={() => setPreviewOpen(false)}
+          className="absolute right-4 top-4 z-10 rounded-full bg-white/10 p-2 text-white transition hover:bg-white/20"
+          aria-label="Close"
+        >
+          <CloseIcon />
+        </button>
+        <img
+          src={photoUrl}
+          alt={fullName}
+          className="relative max-h-[85vh] max-w-[90vw] rounded-2xl object-contain shadow-2xl"
+          onClick={(e) => e.stopPropagation()}
+        />
+      </div>
+    )}
+    </>
   )
 }
 
-function Avatar({ photoUrl, name }: { photoUrl: string | null; name: string }) {
+function Avatar({ photoUrl, name, onClick }: { photoUrl: string | null; name: string; onClick: () => void }) {
   return (
     <div className="relative h-40 w-40 shrink-0 rounded-full p-[3px] shadow-lg sm:h-40 sm:w-40 sm:p-[4px]">
       <div className="avatar-ring absolute inset-0 rounded-full" />
       <div className="relative flex h-full w-full items-center justify-center rounded-full bg-white p-[4px] dark:bg-ink-900">
         {photoUrl ? (
-          <img src={photoUrl} alt={name} className="h-full w-full rounded-full object-cover" />
+          <button
+            type="button"
+            onClick={onClick}
+            title="View full photo"
+            aria-label="View full photo"
+            className="flex h-full w-full cursor-pointer rounded-full"
+          >
+            <img src={photoUrl} alt={name} className="h-full w-full rounded-full object-cover" />
+          </button>
         ) : (
           <div className="flex h-full w-full items-center justify-center rounded-full bg-gradient-to-br from-slate-200 to-slate-300 text-3xl font-bold text-gray-600 dark:from-ink-800 dark:to-ink-800 dark:text-white">
             {name.charAt(0).toUpperCase()}

@@ -1,11 +1,11 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { Link, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { usePageTitle } from '../hooks/usePageTitle'
 import api from '../api/axios'
 import type { SearchUser, SearchProject } from '../types'
 import { getAssetUrl } from '../lib/constants'
-import { SearchIcon, BriefcaseIcon, FolderIcon, GraduationIcon, AwardIcon } from '../components/icons'
+import { SearchIcon, BriefcaseIcon, FolderIcon, GraduationIcon, AwardIcon, LinkIcon } from '../components/icons'
 
 const FEATURES = [
   {
@@ -49,17 +49,28 @@ interface FilterForm {
 export default function HomePage() {
   usePageTitle('YourResume — Find talent and projects')
   const { user } = useAuth()
-  const [tab, setTab] = useState<Tab>('filter')
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  const initialTab = (searchParams.get('tab') as Tab) || 'filter'
+  const initialQ = searchParams.get('q') ?? ''
+
+  const [tab, setTab] = useState<Tab>(initialTab)
   const [searching, setSearching] = useState(false)
   const [searched, setSearched] = useState(false)
 
-  const [filterForm, setFilterForm] = useState<FilterForm>({ name: '', job_title: '', skills: '', experience: '', education: '' })
+  const [filterForm, setFilterForm] = useState<FilterForm>({
+    name: searchParams.get('name') ?? '',
+    job_title: searchParams.get('job_title') ?? '',
+    skills: searchParams.get('skills') ?? '',
+    experience: searchParams.get('experience') ?? '',
+    education: searchParams.get('education') ?? '',
+  })
   const [filterUsers, setFilterUsers] = useState<SearchUser[]>([])
 
-  const [peopleQuery, setPeopleQuery] = useState('')
+  const [peopleQuery, setPeopleQuery] = useState(initialTab === 'people' ? initialQ : '')
   const [people, setPeople] = useState<SearchUser[]>([])
 
-  const [projectQuery, setProjectQuery] = useState('')
+  const [projectQuery, setProjectQuery] = useState(initialTab === 'projects' ? initialQ : '')
   const [projects, setProjects] = useState<SearchProject[]>([])
 
   const setFilter = (key: keyof FilterForm, value: string) =>
@@ -71,6 +82,7 @@ export default function HomePage() {
       if (v.trim()) acc[k] = v.trim()
       return acc
     }, {})
+    setSearchParams({ tab: 'filter', ...params })
     if (Object.keys(params).length === 0) {
       setFilterUsers([])
       setSearched(true)
@@ -90,6 +102,7 @@ export default function HomePage() {
 
   const runPeopleSearch = async (q?: string) => {
     const term = (q ?? peopleQuery).trim()
+    setSearchParams({ tab: 'people', q: term })
     if (!term) {
       setPeople([])
       return
@@ -108,6 +121,7 @@ export default function HomePage() {
 
   const runProjectSearch = async (q?: string) => {
     const term = (q ?? projectQuery).trim()
+    setSearchParams({ tab: 'projects', q: term })
     if (!term) {
       setProjects([])
       return
@@ -124,11 +138,27 @@ export default function HomePage() {
     }
   }
 
+  useEffect(() => {
+    const t = searchParams.get('tab')
+    if (t === 'filter') {
+      const hasFilter = ['name', 'job_title', 'skills', 'experience', 'education'].some((k) => searchParams.get(k))
+      if (hasFilter) void runFilterSearch()
+    } else if (t === 'people') {
+      const q = searchParams.get('q')
+      if (q) void runPeopleSearch(q)
+    } else if (t === 'projects') {
+      const q = searchParams.get('q')
+      if (q) void runProjectSearch(q)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   const clearResults = () => {
     setSearched(false)
     setFilterUsers([])
     setPeople([])
     setProjects([])
+    setSearchParams({})
   }
 
   const userCard = (u: SearchUser) => (
@@ -180,38 +210,77 @@ export default function HomePage() {
   )
 
   const projectCard = (p: SearchProject) => (
-    <Link
+    <article
       key={p.id}
-      to={`/${p.owner?.username ?? ''}`}
-      className="group rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition duration-200 hover:-translate-y-1 hover:border-indigo-300 hover:shadow-lg dark:border-gray-700 dark:bg-gray-900 dark:hover:border-indigo-700"
+      className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white transition-all duration-300 hover:-translate-y-1 hover:border-indigo-300 hover:shadow-[0_0_30px_-5px_rgba(99,102,241,0.6)] dark:border-gray-700 dark:bg-gray-900 dark:hover:border-indigo-600"
     >
-      {p.cover_image && (
-        <img
-          src={getAssetUrl(p.cover_image) ?? ''}
-          alt={p.name}
-          className="h-32 w-full rounded-xl object-cover"
-        />
-      )}
-      <h3 className="mt-3 font-semibold text-gray-900 dark:text-gray-100">{p.name}</h3>
-      {p.description && (
-        <p className="mt-1 line-clamp-2 text-sm text-gray-500 dark:text-gray-400">{p.description}</p>
-      )}
-      {p.technologies && (
-        <div className="mt-2 flex flex-wrap gap-1.5">
-          {p.technologies.split(',').map((t) => t.trim()).filter(Boolean).slice(0, 4).map((t) => (
-            <span
-              key={t}
-              className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600 dark:bg-gray-800 dark:text-gray-300"
+      <div className="relative m-auto mt-3 aspect-video w-11/12 shrink-0 overflow-hidden rounded-lg transition-transform duration-300 ease-out group-hover:scale-105">
+        {p.cover_image ? (
+          <img
+            src={getAssetUrl(p.cover_image) ?? ''}
+            alt={p.name}
+            loading="lazy"
+            className="h-full w-full origin-center object-cover"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-indigo-500 to-violet-500 text-4xl font-bold text-white">
+            {p.name.charAt(0).toUpperCase()}
+          </div>
+        )}
+      </div>
+
+      <div className="flex flex-1 flex-col gap-2.5 p-5 dark:text-white">
+        <h3 className="line-clamp-3 text-justify text-base font-bold leading-snug text-gray-950 dark:text-white">
+          {p.url ? (
+            <a
+              href={p.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition hover:text-indigo-600 dark:hover:text-indigo-400"
             >
-              {t}
-            </span>
-          ))}
+              {p.name}
+            </a>
+          ) : (
+            p.name
+          )}
+        </h3>
+        {p.description && (
+          <p className="line-clamp-4 text-justify text-sm leading-relaxed text-gray-500 dark:text-gray-300">
+            {p.description}
+          </p>
+        )}
+        {p.technologies && (
+          <p className="text-xs text-gray-400 dark:text-gray-400">{p.technologies}</p>
+        )}
+        <p className="text-xs text-gray-400 dark:text-gray-500">
+          by {p.owner ? [p.owner.first_name, p.owner.last_name].filter(Boolean).join(' ') || p.owner.username : 'unknown'}
+        </p>
+      </div>
+
+      <div className="mt-auto flex items-center justify-between gap-2 border-t border-gray-100 px-5 py-2.5 dark:border-gray-800">
+        <div className="flex items-center gap-1.5">
+          {p.url && (
+            <a
+              href={p.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-semibold text-indigo-600 transition hover:bg-indigo-50 dark:text-indigo-400 dark:hover:bg-indigo-950"
+            >
+              <LinkIcon className="h-3.5 w-3.5" />
+              View project
+            </a>
+          )}
+          {p.owner?.username && (
+            <Link
+              to={`/${p.owner.username}`}
+              className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-semibold text-gray-600 transition hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+            >
+              Owner's profile
+            </Link>
+          )}
         </div>
-      )}
-      <p className="mt-3 text-xs text-gray-400 dark:text-gray-500">
-        by {p.owner ? [p.owner.first_name, p.owner.last_name].filter(Boolean).join(' ') || p.owner.username : 'unknown'}
-      </p>
-    </Link>
+      </div>
+    </article>
   )
 
   const results = () => {
@@ -317,7 +386,7 @@ export default function HomePage() {
               {TABS.map((t) => (
                 <button
                   key={t.id}
-                  onClick={() => { setTab(t.id); setSearched(false) }}
+                  onClick={() => { setTab(t.id); setSearched(false); setSearchParams({ tab: t.id }) }}
                   className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
                     tab === t.id
                       ? 'bg-indigo-600 text-white shadow-sm'
@@ -378,7 +447,7 @@ export default function HomePage() {
 
       {/* Filter panel (advanced criteria) */}
       {tab === 'filter' && (
-        <section className="mx-auto -mt-6 max-w-4xl px-4">
+        <section className="mx-auto -mt-6 max-w-4xl px-4 mb-10">
           <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-900">
             <p className="mb-4 text-xs font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">
               Filter by (fill any — combined)

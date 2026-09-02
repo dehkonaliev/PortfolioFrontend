@@ -1,8 +1,8 @@
 import axios from 'axios'
-import { TOKEN_STORAGE_KEY } from '../lib/constants'
+import { TOKEN_STORAGE_KEY, BACKEND_URL } from '../lib/constants'
 
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: BACKEND_URL,
 })
 
 function getToken(): string | null {
@@ -74,7 +74,7 @@ api.interceptors.response.use(
 
       isRefreshing = true
       try {
-        const res = await axios.post('/api/token/refresh', { refresh: refreshToken })
+        const res = await axios.post(`${BACKEND_URL}/token/refresh`, { refresh: refreshToken })
         const newAccess = res.data.access
         const stored = JSON.parse(localStorage.getItem(TOKEN_STORAGE_KEY) || '{}')
         const nextRefresh = res.data.refresh || stored.refresh

@@ -9,6 +9,7 @@ import LoginPage from './pages/LoginPage'
 import SignupPage from './pages/SignupPage'
 import SettingsPage from './pages/SettingsPage'
 import { NotFoundState } from './components/States'
+import { CREATED_BY_LINK } from './lib/constants'
 
 export default function App() {
   return (
@@ -29,7 +30,20 @@ export default function App() {
               </Routes>
             </main>
             <footer className="border-t border-gray-200 py-6 text-center text-sm text-gray-400 dark:border-gray-700 dark:text-gray-500">
-              © {new Date().getFullYear()} Portfolio. Built with care.
+              <span>© {new Date().getFullYear()} YourResume.</span>
+              {CREATED_BY_LINK && (
+                <>
+                  {' '}Created by{' '}
+                  <a
+                    href={CREATED_BY_LINK}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-medium text-indigo-600 transition hover:underline dark:text-indigo-400"
+                  >
+                    Maqsudbek Dehqonaliyev
+                  </a>
+                </>
+              )}
             </footer>
           </div>
         </Router>

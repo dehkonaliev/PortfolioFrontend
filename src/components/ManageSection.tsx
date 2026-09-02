@@ -152,6 +152,7 @@ export default function ManageSection({ type, profile, profileOwnerId, onUpdated
                 description={item.description}
                 technologies={item.technologies}
                 coverImage={item.cover_image}
+                url={item.url}
                 ownerUsername={profile?.username}
                 isOwner={isOwner}
                 onEdit={() => openEdit(item as unknown as Record<string, unknown>)}

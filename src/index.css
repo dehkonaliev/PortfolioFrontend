@@ -122,10 +122,11 @@ body {
 .avatar-ring {
   background: conic-gradient(
     from var(--ring-angle),
-    #d6d6d6,
-    #3c3c3c,
+    #e6df87,
+    #1b1b1b,
+    #4f52a0,
     #6228d7,
-    #9b5bcd,
+    #ffffff,
     #ae0101,
     #f9ce34
   );
