@@ -2,9 +2,63 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>frontend</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <title>YourResume</title>
+    <link id="favicon-link" rel="icon" href="/favicon-light/favicon.ico" />
+    <link id="apple-touch-icon" rel="apple-touch-icon" href="/favicon-light/android-chrome-512x512.png" />
+    <link id="manifest-link" rel="manifest" href="/favicon-light/site.webmanifest" />
+    <script>
+      (function () {
+        var modes = {
+          light: {
+            icon: '/favicon-light/favicon.ico',
+            apple: '/favicon-light/android-chrome-512x512.png',
+            manifest: '/favicon-light/site.webmanifest',
+          },
+          dark: {
+            icon: '/favicon-dark/favicon.ico',
+            apple: '/favicon-dark/android-chrome-512x512.png',
+            manifest: '/favicon-dark/site.webmanifest',
+          },
+        }
+
+        function currentMode() {
+          var stored = null
+          try {
+            var raw = localStorage.getItem('portfolio_theme')
+            if (raw === 'light' || raw === 'dark') stored = raw
+          } catch (e) {}
+          if (!stored) {
+            stored = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+          }
+          if (document.documentElement.classList.contains('dark')) return 'dark'
+          return stored
+        }
+
+        function apply(mode) {
+          var m = modes[mode] || modes.light
+          var icon = document.getElementById('favicon-link')
+          var apple = document.getElementById('apple-touch-icon')
+          var manifest = document.getElementById('manifest-link')
+          if (icon) icon.setAttribute('href', m.icon)
+          if (apple) apple.setAttribute('href', m.apple)
+          if (manifest) manifest.setAttribute('href', m.manifest)
+        }
+
+        apply(currentMode())
+
+        var observer = new MutationObserver(function () {
+          apply(document.documentElement.classList.contains('dark') ? 'dark' : 'light')
+        })
+        observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+      })()
+    </script>
   </head>
   <body>
     <div id="root"></div>
