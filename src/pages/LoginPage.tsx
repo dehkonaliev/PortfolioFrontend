@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { usePageTitle } from '../hooks/usePageTitle'
 import { Button, Field, Input } from '../components/ui'
+import { extractError } from '../lib/errors'
 
 export default function LoginPage() {
   usePageTitle('Sign in — YourResume')
@@ -28,15 +29,12 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="mx-auto flex min-h-[75vh] max-w-md items-center px-4 py-16">
+    <div className="mx-auto flex min-h-[75vh] max-w-sm items-center px-4 py-16">
       <div className="w-full">
-        <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm dark:border-gray-700 dark:bg-gray-900">
+        <div className="rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-8 shadow-[var(--shadow-card)]">
           <div className="mb-6 text-center">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 text-xl font-bold text-white shadow-lg">
-              P
-            </div>
-            <h1 className="mt-4 text-2xl font-bold text-gray-900 dark:text-gray-100">Welcome back</h1>
-            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+            <h1 className="text-xl font-semibold text-[var(--text-primary)]">Welcome back</h1>
+            <p className="mt-1 text-sm text-[var(--text-tertiary)]">
               Sign in to manage your portfolio.
             </p>
           </div>
@@ -63,7 +61,7 @@ export default function LoginPage() {
             </Field>
 
             {error && (
-              <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600 dark:bg-red-900/30 dark:text-red-400">
+              <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400">
                 {error}
               </p>
             )}
@@ -74,9 +72,9 @@ export default function LoginPage() {
           </form>
         </div>
 
-        <p className="mt-5 text-center text-sm text-gray-500 dark:text-gray-400">
+        <p className="mt-4 text-center text-sm text-[var(--text-tertiary)]">
           Don't have an account?{' '}
-          <Link to="/signup" className="font-semibold text-indigo-600 hover:underline dark:text-indigo-400">
+          <Link to="/signup" className="font-medium text-[var(--accent)] hover:underline">
             Create one free
           </Link>
         </p>
@@ -85,17 +83,4 @@ export default function LoginPage() {
   )
 }
 
-function extractError(err: unknown): string {
-  const e = err as {
-    response?: { data?: { data?: Record<string, unknown>; message?: string } }
-    message?: string
-  }
-  const d = e.response?.data?.data as Record<string, unknown> | undefined
-  if (d) {
-    for (const val of Object.values(d)) {
-      if (Array.isArray(val)) return String(val[0])
-      return String(val)
-    }
-  }
-  return e.response?.data?.message || e.message || 'Login failed'
-}
+

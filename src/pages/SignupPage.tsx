@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuth, type SignupData } from '../context/AuthContext'
 import { usePageTitle } from '../hooks/usePageTitle'
 import { Field, Input, Button } from '../components/ui'
+import { extractError } from '../lib/errors'
 
 type Step = 1 | 2 | 3
 
@@ -92,44 +93,41 @@ export default function SignupPage() {
   ]
 
   return (
-    <div className="mx-auto flex min-h-[75vh] max-w-md items-center px-4 py-16">
+    <div className="mx-auto flex min-h-[75vh] max-w-sm items-center px-4 py-16">
       <div className="w-full">
         {/* Stepper */}
         <div className="mb-8 flex items-center justify-center gap-2">
           {steps.map((s, i) => (
             <div key={s.n} className="flex items-center gap-2">
               <div
-                className={`flex h-9 w-9 items-center justify-center rounded-full text-sm font-semibold transition ${
+                className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold transition ${
                   step >= s.n
-                    ? 'bg-indigo-600 text-white'
-                    : 'border-2 border-gray-300 text-gray-400 dark:border-gray-600 dark:text-gray-500'
+                    ? 'bg-[var(--accent)] text-[#0a0a0b]'
+                    : 'border border-[var(--border-subtle)] text-[var(--text-tertiary)]'
                 }`}
               >
                 {s.n}
               </div>
               <span
                 className={`text-sm font-medium ${
-                  step >= s.n ? 'text-gray-900 dark:text-gray-100' : 'text-gray-400 dark:text-gray-500'
+                  step >= s.n ? 'text-[var(--text-primary)]' : 'text-[var(--text-tertiary)]'
                 }`}
               >
                 {s.label}
               </span>
               {i < steps.length - 1 && (
-                <div className={`h-px w-8 ${step > s.n ? 'bg-indigo-500' : 'bg-gray-300 dark:bg-gray-600'}`} />
+                <div className={`h-px w-8 ${step > s.n ? 'bg-[var(--accent)]' : 'bg-[var(--border-subtle)]'}`} />
               )}
             </div>
           ))}
         </div>
 
-        <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm dark:border-gray-700 dark:bg-gray-900">
+        <div className="rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-8 shadow-[var(--shadow-card)]">
           {step === 1 && (
             <>
               <div className="mb-6 text-center">
-                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 text-xl font-bold text-white shadow-lg">
-                  P
-                </div>
-                <h1 className="mt-4 text-2xl font-bold text-gray-900 dark:text-gray-100">Let's get started</h1>
-                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                <h1 className="text-xl font-semibold text-[var(--text-primary)]">Let's get started</h1>
+                <p className="mt-1 text-sm text-[var(--text-tertiary)]">
                   Step 1 of 3 — we'll send a 6-digit code to your email.
                 </p>
               </div>
@@ -145,7 +143,7 @@ export default function SignupPage() {
                   />
                 </Field>
                 {error && (
-                  <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600 dark:bg-red-900/30 dark:text-red-400">
+                  <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400">
                     {error}
                   </p>
                 )}
@@ -159,10 +157,10 @@ export default function SignupPage() {
           {step === 2 && (
             <>
               <div className="mb-6 text-center">
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Confirm your email</h1>
-                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                <h1 className="text-xl font-semibold text-[var(--text-primary)]">Confirm your email</h1>
+                <p className="mt-1 text-sm text-[var(--text-tertiary)]">
                   Step 2 of 3 — enter the code sent to{' '}
-                  <span className="font-medium text-gray-800 dark:text-gray-200">{email}</span>.
+                  <span className="font-medium text-[var(--text-secondary)]">{email}</span>.
                 </p>
               </div>
               <form onSubmit={handleVerify} className="space-y-4">
@@ -177,16 +175,16 @@ export default function SignupPage() {
                     required
                   />
                 </Field>
-                {message && <p className="text-sm text-green-600 dark:text-green-400">{message}</p>}
+                {message && <p className="text-sm text-emerald-500">{message}</p>}
                 {error && (
-                  <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600 dark:bg-red-900/30 dark:text-red-400">
+                  <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400">
                     {error}
                   </p>
                 )}
                 <button
                   type="button"
                   onClick={() => { setStep(1); setCode(''); setError(null) }}
-                  className="block w-full text-center text-sm font-medium text-indigo-600 hover:underline dark:text-indigo-400"
+                  className="block w-full text-center text-sm font-medium text-[var(--accent)] hover:underline"
                 >
                   Resend or change email
                 </button>
@@ -200,8 +198,8 @@ export default function SignupPage() {
           {step === 3 && (
             <>
               <div className="mb-6 text-center">
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Set up your profile</h1>
-                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                <h1 className="text-xl font-semibold text-[var(--text-primary)]">Set up your profile</h1>
+                <p className="mt-1 text-sm text-[var(--text-tertiary)]">
                   Step 3 of 3 — almost done!
                 </p>
               </div>
@@ -243,7 +241,7 @@ export default function SignupPage() {
                   />
                 </Field>
                 {error && (
-                  <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600 dark:bg-red-900/30 dark:text-red-400">
+                  <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400">
                     {error}
                   </p>
                 )}
@@ -255,9 +253,9 @@ export default function SignupPage() {
           )}
         </div>
 
-        <p className="mt-4 text-center text-sm text-gray-500 dark:text-gray-400">
+        <p className="mt-4 text-center text-sm text-[var(--text-tertiary)]">
           Already have an account?{' '}
-          <Link to="/login" className="font-semibold text-indigo-600 hover:underline dark:text-indigo-400">
+          <Link to="/login" className="font-medium text-[var(--accent)] hover:underline">
             Sign in
           </Link>
         </p>
@@ -266,17 +264,4 @@ export default function SignupPage() {
   )
 }
 
-function extractError(err: unknown): string {
-  const e = err as {
-    response?: { data?: { data?: Record<string, unknown>; message?: string } }
-    message?: string
-  }
-  const d = e.response?.data?.data as Record<string, unknown> | undefined
-  if (d) {
-    for (const val of Object.values(d)) {
-      if (Array.isArray(val)) return String(val[0])
-      return String(val)
-    }
-  }
-  return e.response?.data?.message || e.message || 'Something went wrong'
-}
+

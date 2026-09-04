@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import { ThemeProvider } from './context/ThemeContext'
 import Navbar from './components/Navbar'
+import Starfield from './components/Starfield'
 import HomePage from './pages/HomePage'
 import ResumePage from './pages/ResumePage'
 import ProjectsPage from './pages/ProjectsPage'
@@ -16,9 +17,10 @@ export default function App() {
     <ThemeProvider>
       <AuthProvider>
         <Router>
-          <div className="flex min-h-screen flex-col">
+          <div className="relative flex min-h-screen flex-col">
+            <Starfield />
             <Navbar />
-            <main className="flex-1">
+            <main className="relative z-10 flex-1">
               <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/login" element={<LoginPage />} />
@@ -29,7 +31,7 @@ export default function App() {
                 <Route path="*" element={<NotFoundState />} />
               </Routes>
             </main>
-            <footer className="border-t border-gray-200 py-6 text-center text-sm text-gray-400 dark:border-gray-700 dark:text-gray-500">
+            <footer className="border-t border-[var(--border-subtle)] py-5 text-center text-xs text-[var(--text-tertiary)]">
               <span>© {new Date().getFullYear()} YourResume.</span>
               {CREATED_BY_LINK && (
                 <>
@@ -38,7 +40,7 @@ export default function App() {
                     href={CREATED_BY_LINK}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-medium text-indigo-600 transition hover:underline dark:text-indigo-400"
+                    className="font-medium text-[var(--accent)] transition hover:underline"
                   >
                     Maqsudbek Dehqonaliyev
                   </a>

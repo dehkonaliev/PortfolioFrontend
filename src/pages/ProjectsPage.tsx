@@ -26,19 +26,19 @@ export default function ProjectsPage() {
   const name = [profile.first_name, profile.last_name].filter(Boolean).join(' ') || profile.username
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8">
+    <div className="mx-auto max-w-[1200px] px-6 py-8 max-sm:px-4">
       <div className="mb-8">
         <Link
           to={`/${profile.username}`}
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-indigo-600 hover:underline dark:text-indigo-400"
+          className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[var(--accent)] hover:underline"
         >
-          <ChevronRightIcon className="h-4 w-4 rotate-180" />
+          <ChevronRightIcon className="h-3.5 w-3.5 rotate-180" />
           Back to {name}'s resume
         </Link>
-        <h1 className="mt-2 text-2xl font-bold text-gray-900 dark:text-gray-100">
+        <h1 className="mt-2 text-2xl font-semibold tracking-tight text-[var(--text-primary)]">
           Projects · {name}
         </h1>
-        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+        <p className="mt-1 text-sm text-[var(--text-tertiary)]">
           {profile.projects.length} project{profile.projects.length !== 1 ? 's' : ''} showcased by {name}
         </p>
       </div>

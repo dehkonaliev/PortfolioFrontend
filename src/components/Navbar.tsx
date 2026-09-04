@@ -44,34 +44,33 @@ export default function Navbar() {
   }
 
   return (
-    <header className="sticky top-0 z-40 border-b border-gray-200 bg-white/80 backdrop-blur-md dark:border-gray-700 dark:bg-gray-950/80">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4">
+    <header className="sticky top-0 z-40 border-b border-[var(--border-subtle)] bg-[var(--bg-canvas)]/90">
+      <div className="mx-auto flex h-14 max-w-[1200px] items-center justify-between gap-4 px-6">
         <Link to="/" className="flex items-center gap-2.5">
           <img
             src={theme === 'dark' ? '/favicon-dark/android-chrome-512x512.png' : '/favicon-light/android-chrome-512x512.png'}
             alt="Portfolio"
-            className="h-9 w-9 rounded-xl object-cover"
+            className="h-8 w-8 rounded-lg object-cover"
           />
-          <span className="font-display text-lg font-bold tracking-tight text-gray-900 dark:text-gray-100">YourResume</span>
+          <span className="text-sm font-semibold tracking-tight text-[var(--text-primary)]">YourResume</span>
         </Link>
 
         {/* Desktop nav */}
-        <div className="hidden items-center gap-2 sm:flex">
+        <div className="hidden items-center gap-1 sm:flex">
           {user ? (
             <>
               <Link
                 to={`/${user.username}`}
-                className="rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+                className="rounded-lg px-3 py-1.5 text-sm font-medium text-[var(--text-secondary)] transition hover:bg-[var(--bg-surface-raised)] hover:text-[var(--text-primary)]"
               >
                 My Page
               </Link>
-              <div className="mx-2 h-6 w-px bg-gray-200 dark:bg-gray-700" />
               <div className="relative" ref={dropdownRef}>
                 <button
                   onClick={() => setDropdownOpen((v) => !v)}
-                  className="flex items-center gap-2 rounded-lg bg-gray-100 py-1.5 pl-2 pr-2 transition hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700"
+                  className="flex items-center gap-2 rounded-lg border border-[var(--border-subtle)] py-1 pl-1.5 pr-2 transition hover:border-[var(--border-strong)]"
                 >
-                  <span className="flex h-7 w-7 items-center justify-center overflow-hidden rounded-full bg-indigo-500 text-xs font-bold text-white">
+                  <span className="flex h-6 w-6 items-center justify-center overflow-hidden rounded-full bg-[var(--bg-surface-raised)] text-[10px] font-semibold text-[var(--text-secondary)]">
                     {String(user.profile_thumbnail || '').trim() ? (
                       <img
                         src={getAssetUrl(String(user.profile_thumbnail || '')) ?? ''}
@@ -82,34 +81,34 @@ export default function Navbar() {
                       String(user.username || '?').charAt(0).toUpperCase()
                     )}
                   </span>
-                  <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
+                  <span className="text-sm font-medium text-[var(--text-secondary)]">
                     {String(user.first_name || user.username)}
                   </span>
-                  <ChevronDownIcon className={`h-4 w-4 transition ${dropdownOpen ? 'rotate-180' : ''}`} />
+                  <ChevronDownIcon className={`h-3.5 w-3.5 text-[var(--text-tertiary)] transition ${dropdownOpen ? 'rotate-180' : ''}`} />
                 </button>
 
                 {dropdownOpen && (
-                  <div className="absolute right-0 top-full mt-2 w-52 overflow-hidden rounded-xl border border-gray-200 bg-white py-1 shadow-lg dark:border-gray-700 dark:bg-gray-900">
+                  <div className="absolute right-0 top-full mt-1 w-48 overflow-hidden rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] py-1 shadow-[var(--shadow-card)]">
                     <Link
                       to="/settings"
-                      className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 transition hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800"
+                      className="flex items-center gap-2.5 px-3.5 py-2 text-sm text-[var(--text-secondary)] transition hover:bg-[var(--bg-surface-raised)] hover:text-[var(--text-primary)]"
                     >
-                      <SettingsIcon />
+                      <SettingsIcon className="h-4 w-4" />
                       Settings
                     </Link>
                     <Link
                       to={`/${user.username}/projects`}
-                      className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 transition hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800"
+                      className="flex items-center gap-2.5 px-3.5 py-2 text-sm text-[var(--text-secondary)] transition hover:bg-[var(--bg-surface-raised)] hover:text-[var(--text-primary)]"
                     >
-                      <FolderIcon />
+                      <FolderIcon className="h-4 w-4" />
                       My Projects
                     </Link>
-                    <div className="my-1 h-px bg-gray-200 dark:bg-gray-700" />
+                    <div className="my-1 h-px bg-[var(--border-subtle)]" />
                     <button
                       onClick={handleLogout}
-                      className="flex w-full items-center gap-2.5 px-4 py-2.5 text-left text-sm text-red-600 transition hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
+                      className="flex w-full items-center gap-2.5 px-3.5 py-2 text-left text-sm text-red-500 transition hover:bg-red-500/10"
                     >
-                      <LogoutIcon />
+                      <LogoutIcon className="h-4 w-4" />
                       Logout
                     </button>
                   </div>
@@ -120,13 +119,13 @@ export default function Navbar() {
             <>
               <Link
                 to="/login"
-                className="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+                className="rounded-lg px-3 py-1.5 text-sm font-medium text-[var(--text-secondary)] transition hover:bg-[var(--bg-surface-raised)] hover:text-[var(--text-primary)]"
               >
                 Sign in
               </Link>
               <Link
                 to="/signup"
-                className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700"
+                className="rounded-lg bg-[var(--accent)] px-3.5 py-1.5 text-sm font-semibold text-[#0a0a0b] transition hover:opacity-90"
               >
                 Create account
               </Link>
@@ -136,27 +135,27 @@ export default function Navbar() {
           <button
             onClick={toggleTheme}
             title="Toggle theme"
-            className="ml-1 rounded-lg p-2 text-gray-500 transition hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
+            className="ml-1 rounded-lg p-1.5 text-[var(--text-tertiary)] transition hover:bg-[var(--bg-surface-raised)] hover:text-[var(--text-primary)]"
           >
-            {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
+            {theme === 'dark' ? <SunIcon className="h-4 w-4" /> : <MoonIcon className="h-4 w-4" />}
           </button>
         </div>
 
         {/* Mobile: theme toggle + hamburger */}
-        <div className="flex items-center gap-2 sm:hidden">
+        <div className="flex items-center gap-1 sm:hidden">
           <button
             onClick={toggleTheme}
             title="Toggle theme"
-            className="rounded-lg p-2 text-gray-500 transition hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
+            className="rounded-lg p-1.5 text-[var(--text-tertiary)] transition hover:bg-[var(--bg-surface-raised)]"
           >
-            {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
+            {theme === 'dark' ? <SunIcon className="h-4 w-4" /> : <MoonIcon className="h-4 w-4" />}
           </button>
           <button
             onClick={() => setMobileOpen((v) => !v)}
             aria-label="Menu"
-            className="rounded-lg p-2 text-gray-500 transition hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
+            className="rounded-lg p-1.5 text-[var(--text-tertiary)] transition hover:bg-[var(--bg-surface-raised)]"
           >
-            <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round">
+            <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round">
               {mobileOpen ? (
                 <path d="M18 6 6 18M6 6l12 12" />
               ) : (
@@ -169,12 +168,12 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="border-t border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-950 sm:hidden">
-          <div className="space-y-1 px-4 py-3">
+        <div className="border-t border-[var(--border-subtle)] bg-[var(--bg-canvas)] sm:hidden">
+          <div className="space-y-0.5 px-4 py-2">
             {user ? (
               <>
-                <div className="flex items-center gap-3 rounded-lg bg-gray-100 px-3 py-3 dark:bg-gray-800">
-                  <span className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-indigo-500 text-base font-bold text-white">
+                <div className="flex items-center gap-2.5 rounded-lg bg-[var(--bg-surface-raised)] px-3 py-2.5">
+                  <span className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-[var(--bg-surface)] text-xs font-semibold text-[var(--text-secondary)]">
                     {String(user.profile_thumbnail || '').trim() ? (
                       <img
                         src={getAssetUrl(String(user.profile_thumbnail || '')) ?? ''}
@@ -186,33 +185,33 @@ export default function Navbar() {
                     )}
                   </span>
                   <div>
-                    <p className="font-semibold text-gray-900 dark:text-gray-100">
+                    <p className="text-sm font-semibold text-[var(--text-primary)]">
                       {String(user.first_name || user.username)}
                     </p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">@{String(user.username)}</p>
+                    <p className="text-xs text-[var(--text-tertiary)]">@{String(user.username)}</p>
                   </div>
                 </div>
                 <Link
                   to={`/${user.username}`}
-                  className="block rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800"
+                  className="block rounded-lg px-3 py-2 text-sm font-medium text-[var(--text-secondary)] transition hover:bg-[var(--bg-surface-raised)] hover:text-[var(--text-primary)]"
                 >
                   My Page
                 </Link>
                 <Link
                   to={`/${user.username}/projects`}
-                  className="block rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800"
+                  className="block rounded-lg px-3 py-2 text-sm font-medium text-[var(--text-secondary)] transition hover:bg-[var(--bg-surface-raised)] hover:text-[var(--text-primary)]"
                 >
                   My Projects
                 </Link>
                 <Link
                   to="/settings"
-                  className="block rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800"
+                  className="block rounded-lg px-3 py-2 text-sm font-medium text-[var(--text-secondary)] transition hover:bg-[var(--bg-surface-raised)] hover:text-[var(--text-primary)]"
                 >
                   Settings
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="block w-full rounded-lg px-3 py-2.5 text-left text-sm font-medium text-red-500 transition hover:bg-gray-100 dark:hover:bg-gray-800"
+                  className="block w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-red-500 transition hover:bg-red-500/10"
                 >
                   Logout
                 </button>
@@ -221,13 +220,13 @@ export default function Navbar() {
               <>
                 <Link
                   to="/login"
-                  className="block rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800"
+                  className="block rounded-lg px-3 py-2 text-sm font-medium text-[var(--text-secondary)] transition hover:bg-[var(--bg-surface-raised)] hover:text-[var(--text-primary)]"
                 >
                   Sign in
                 </Link>
                 <Link
                   to="/signup"
-                  className="block rounded-lg bg-indigo-600 px-3 py-2.5 text-center text-sm font-semibold text-white transition hover:bg-indigo-700"
+                  className="block rounded-lg bg-[var(--accent)] px-3 py-2 text-center text-sm font-semibold text-[#0a0a0b]"
                 >
                   Create account
                 </Link>

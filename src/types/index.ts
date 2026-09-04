@@ -56,6 +56,7 @@ export interface PublicProfile {
   address: string | null
   phone_number: string | null
   linkedin_url: string | null
+  telegram_url: string | null
   profile_photo: string | null
   profile_thumbnail: string | null
   experiences: Experience[]

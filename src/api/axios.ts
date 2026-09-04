@@ -80,7 +80,7 @@ api.interceptors.response.use(
         const nextRefresh = res.data.refresh || stored.refresh
         localStorage.setItem(
           TOKEN_STORAGE_KEY,
-          JSON.stringify({ access: newAccess, refresh: nextRefresh }),
+          JSON.stringify({ access: newAccess, refresh: nextRefresh, user: stored.user ?? null }),
         )
         onRefreshed(newAccess)
         original.headers.Authorization = `Bearer ${newAccess}`

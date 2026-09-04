@@ -3,19 +3,22 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { usePageTitle } from '../hooks/usePageTitle'
 import { Field, Input, Textarea, Button } from '../components/ui'
+import AutocompleteInput from '../components/AutocompleteInput'
 import { getAssetUrl } from '../lib/constants'
 import api from '../api/axios'
+import { extractError } from '../lib/errors'
 
 interface ProfileData {
   first_name: string
   last_name: string
   job_title: string
   summary: string
+  email: string
   address: string
   phone_number: string
   linkedin_url: string
+  telegram_url: string
   profile_photo?: string | null
-  email?: string
   username?: string
 }
 
@@ -24,9 +27,11 @@ const EMPTY: ProfileData = {
   last_name: '',
   job_title: '',
   summary: '',
+  email: '',
   address: '',
   phone_number: '',
   linkedin_url: '',
+  telegram_url: '',
 }
 
 export default function SettingsPage() {
@@ -58,8 +63,9 @@ export default function SettingsPage() {
           address: d.address ?? '',
           phone_number: d.phone_number ?? '',
           linkedin_url: d.linkedin_url ?? '',
+          telegram_url: d.telegram_url ?? '',
           profile_photo: d.profile_photo ?? null,
-          email: d.email,
+          email: d.email ?? '',
           username: d.username,
         })
         setLoaded(true)
@@ -81,21 +87,30 @@ export default function SettingsPage() {
     setMessage(null)
     setSaving(true)
     try {
-      const payload: FormData | Record<string, unknown> = photoFile
-        ? (() => {
-            const fd = new FormData()
-            fd.append('profile_photo', photoFile)
-            return fd
-          })()
-        : {
-            first_name: form.first_name,
-            last_name: form.last_name,
-            job_title: form.job_title,
-            summary: form.summary,
-            address: form.address,
-            phone_number: form.phone_number,
-            linkedin_url: form.linkedin_url,
-          }
+      const textFields: Record<string, unknown> = {
+        first_name: form.first_name,
+        last_name: form.last_name,
+        job_title: form.job_title,
+        summary: form.summary,
+        email: form.email,
+        address: form.address,
+        phone_number: form.phone_number,
+        linkedin_url: form.linkedin_url,
+        telegram_url: form.telegram_url,
+      }
+
+      let payload: FormData | Record<string, unknown>
+      if (photoFile) {
+        const fd = new FormData()
+        fd.append('profile_photo', photoFile)
+        for (const [key, value] of Object.entries(textFields)) {
+          fd.append(key, String(value ?? ''))
+        }
+        payload = fd
+      } else {
+        payload = textFields
+      }
+
       await api.patch('/settings', payload)
       await refreshUser()
       setPhotoFile(null)
@@ -122,30 +137,30 @@ export default function SettingsPage() {
   return (
     <div className="mx-auto max-w-2xl px-4 py-12">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Settings</h1>
-        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+        <h1 className="text-2xl font-semibold tracking-tight text-[var(--text-primary)]">Settings</h1>
+        <p className="mt-1 text-sm text-[var(--text-tertiary)]">
           {user ? `Signed in as @${String(user.username)}` : 'Manage your account'}
         </p>
       </div>
 
       {message && (
-        <div className="mb-6 rounded-lg bg-green-50 px-4 py-3 text-sm text-green-700 dark:bg-green-900/30 dark:text-green-400">
+        <div className="mb-6 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 dark:border-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-400">
           {message}
         </div>
       )}
       {error && (
-        <div className="mb-6 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600 dark:bg-red-900/30 dark:text-red-400">
+        <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400">
           {error}
         </div>
       )}
 
       <form onSubmit={handleSave} className="space-y-6">
-        <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900">
-          <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">Profile</h2>
+        <section className="rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-6 shadow-[var(--shadow-card)]">
+          <h2 className="mb-4 text-base font-semibold text-[var(--text-primary)]">Profile</h2>
           {loaded ? (
             <div className="space-y-4">
               <div className="flex items-center gap-4">
-                <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-indigo-500 text-2xl font-bold text-white">
+                <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-[var(--border-subtle)] bg-[var(--bg-surface-raised)] text-2xl font-semibold text-[var(--text-tertiary)]">
                   {photoFile ? (
                     <img src={URL.createObjectURL(photoFile)} alt="Preview" className="h-full w-full object-cover" />
                   ) : form.profile_photo ? (
@@ -162,7 +177,7 @@ export default function SettingsPage() {
                       onChange={(e) => setPhotoFile(e.target.files?.[0] ?? null)}
                     />
                   </Field>
-                  <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">A 300x300 thumbnail is auto-generated.</p>
+                  <p className="mt-1 text-xs text-[var(--text-tertiary)]">A 300x300 thumbnail is auto-generated.</p>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
@@ -174,25 +189,62 @@ export default function SettingsPage() {
                 </Field>
               </div>
               <Field label="Job title">
-                <Input value={form.job_title} onChange={(e) => set('job_title', e.target.value)} placeholder="e.g. Software Engineer" />
+                <AutocompleteInput
+                  type="job_title"
+                  value={form.job_title}
+                  onChange={(v) => set('job_title', v)}
+                  placeholder="e.g. Software Engineer"
+                />
               </Field>
               <Field label="Summary">
                 <Textarea rows={3} value={form.summary} onChange={(e) => set('summary', e.target.value)} />
               </Field>
-              <div className="grid grid-cols-2 gap-4">
-                <Field label="Phone">
-                  <Input value={form.phone_number} onChange={(e) => set('phone_number', e.target.value)} />
-                </Field>
-                <Field label="LinkedIn URL">
-                  <Input value={form.linkedin_url} onChange={(e) => set('linkedin_url', e.target.value)} />
-                </Field>
-              </div>
+            </div>
+          ) : (
+            <p className="text-sm text-[var(--text-tertiary)]">Loading...</p>
+          )}
+        </section>
+
+        <section className="rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-6 shadow-[var(--shadow-card)]">
+          <h2 className="mb-4 text-base font-semibold text-[var(--text-primary)]">Contacts</h2>
+          {loaded ? (
+            <div className="space-y-4">
+              <Field label="Email">
+                <Input
+                  type="email"
+                  value={form.email}
+                  onChange={(e) => set('email', e.target.value)}
+                  placeholder="you@example.com"
+                />
+              </Field>
+              <Field label="Phone">
+                <Input
+                  type="tel"
+                  value={form.phone_number}
+                  onChange={(e) => set('phone_number', e.target.value)}
+                  placeholder="+1 555 000 0000"
+                />
+              </Field>
               <Field label="Address">
                 <Input value={form.address} onChange={(e) => set('address', e.target.value)} />
               </Field>
+              <Field label="LinkedIn URL">
+                <Input
+                  value={form.linkedin_url}
+                  onChange={(e) => set('linkedin_url', e.target.value)}
+                  placeholder="https://linkedin.com/in/..."
+                />
+              </Field>
+              <Field label="Telegram URL">
+                <Input
+                  value={form.telegram_url}
+                  onChange={(e) => set('telegram_url', e.target.value)}
+                  placeholder="https://t.me/..."
+                />
+              </Field>
             </div>
           ) : (
-            <p className="text-sm text-gray-500 dark:text-gray-400">Loading...</p>
+            <p className="text-sm text-[var(--text-tertiary)]">Loading...</p>
           )}
         </section>
 
@@ -203,9 +255,9 @@ export default function SettingsPage() {
         </div>
       </form>
 
-      <section className="mt-8 rounded-2xl border border-red-200 bg-white p-6 shadow-sm dark:border-red-900 dark:bg-gray-900">
-        <h2 className="text-lg font-semibold text-red-600 dark:text-red-400">Delete account</h2>
-        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+      <section className="mt-8 rounded-xl border border-red-200/50 bg-[var(--bg-surface)] p-6 shadow-[var(--shadow-card)] dark:border-red-900/50">
+        <h2 className="text-base font-semibold text-red-500">Delete account</h2>
+        <p className="mt-1 text-sm text-[var(--text-tertiary)]">
           Permanently delete your account and all of your data. This cannot be undone.
         </p>
         {confirmDelete ? (
@@ -218,7 +270,7 @@ export default function SettingsPage() {
             </Button>
           </div>
         ) : (
-          <Button variant="outline" className="mt-4 text-red-600 dark:text-red-400" onClick={() => setConfirmDelete(true)}>
+          <Button variant="outline" className="mt-4 text-red-500" onClick={() => setConfirmDelete(true)}>
             Delete account
           </Button>
         )}
@@ -227,17 +279,4 @@ export default function SettingsPage() {
   )
 }
 
-function extractError(err: unknown): string {
-  const e = err as {
-    response?: { data?: { data?: Record<string, unknown>; message?: string } }
-    message?: string
-  }
-  const d = e.response?.data?.data as Record<string, unknown> | undefined
-  if (d) {
-    for (const val of Object.values(d)) {
-      if (Array.isArray(val)) return String(val[0])
-      return String(val)
-    }
-  }
-  return e.response?.data?.message || e.message || 'Something went wrong'
-}
+

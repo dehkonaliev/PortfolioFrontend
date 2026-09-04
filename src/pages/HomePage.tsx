@@ -9,22 +9,22 @@ import { SearchIcon, BriefcaseIcon, FolderIcon, GraduationIcon, AwardIcon, LinkI
 
 const FEATURES = [
   {
-    icon: <BriefcaseIcon className="h-6 w-6" />,
+    icon: <BriefcaseIcon className="h-5 w-5" />,
     title: 'Showcase your journey',
     desc: 'Professional experience, timeline, and roles all in one place.',
   },
   {
-    icon: <FolderIcon className="h-6 w-6" />,
+    icon: <FolderIcon className="h-5 w-5" />,
     title: 'Portfolio of projects',
     desc: 'Highlight your best work with rich project pages and details.',
   },
   {
-    icon: <GraduationIcon className="h-6 w-6" />,
+    icon: <GraduationIcon className="h-5 w-5" />,
     title: 'Credentials & skills',
     desc: 'Education, certifications, languages and fine-grained skill levels.',
   },
   {
-    icon: <AwardIcon className="h-6 w-6" />,
+    icon: <AwardIcon className="h-5 w-5" />,
     title: 'Get discovered',
     desc: 'Employers can search by skill, experience, or field to find you.',
   },
@@ -165,45 +165,45 @@ export default function HomePage() {
     <Link
       key={u.id}
       to={`/${u.username}`}
-      className="group rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition duration-200 hover:-translate-y-1 hover:border-indigo-300 hover:shadow-lg dark:border-gray-700 dark:bg-gray-900 dark:hover:border-indigo-700"
+      className="group rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-5 shadow-[var(--shadow-card)] transition-colors hover:border-[var(--border-strong)]"
     >
       <div className="flex items-center gap-3">
         {u.profile_thumbnail || u.profile_photo ? (
           <img
             src={getAssetUrl(u.profile_thumbnail || u.profile_photo) ?? ''}
             alt={u.first_name || u.username}
-            className="h-14 w-14 rounded-full object-cover ring-2 ring-indigo-100 dark:ring-indigo-900/40"
+            className="h-12 w-12 rounded-full object-cover border border-[var(--border-subtle)]"
           />
         ) : (
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-violet-500 text-lg font-bold text-white">
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--bg-surface-raised)] text-sm font-semibold text-[var(--text-tertiary)]">
             {(u.first_name || u.username).charAt(0).toUpperCase()}
           </div>
         )}
         <div className="min-w-0">
-          <h3 className="truncate font-semibold text-gray-900 dark:text-gray-100">
+          <h3 className="truncate text-sm font-semibold text-[var(--text-primary)]">
             {[u.first_name, u.last_name].filter(Boolean).join(' ') || u.username}
           </h3>
-          <p className="truncate text-sm text-gray-500 dark:text-gray-400">
+          <p className="truncate text-[13px] text-[var(--text-tertiary)]">
             {u.job_title || `@${u.username}`}
           </p>
         </div>
       </div>
       {u.summary && (
-        <p className="mt-3 line-clamp-2 text-sm text-gray-500 dark:text-gray-400">{u.summary}</p>
+        <p className="mt-3 line-clamp-2 text-[13px] text-[var(--text-secondary)]">{u.summary}</p>
       )}
       {u.matched_skills && u.matched_skills.length > 0 && (
         <div className="mt-3 flex flex-wrap gap-1.5">
           {u.matched_skills.map((s) => (
             <span
               key={s.id}
-              className="rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-medium text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300"
+              className="rounded-full border border-[var(--border-subtle)] bg-[var(--bg-surface-raised)] px-2 py-0.5 text-[11px] font-medium text-[var(--text-secondary)]"
             >
               {s.name}
             </span>
           ))}
         </div>
       )}
-      <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-indigo-600 opacity-0 transition group-hover:opacity-100 dark:text-indigo-400">
+      <span className="mt-3 inline-flex items-center gap-1 text-[13px] font-medium text-[var(--accent)] opacity-0 transition group-hover:opacity-100">
         View portfolio →
       </span>
     </Link>
@@ -212,73 +212,37 @@ export default function HomePage() {
   const projectCard = (p: SearchProject) => (
     <article
       key={p.id}
-      className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white transition-all duration-300 hover:-translate-y-1 hover:border-indigo-300 hover:shadow-[0_0_30px_-5px_rgba(99,102,241,0.6)] dark:border-gray-700 dark:bg-gray-900 dark:hover:border-indigo-600"
+      className="group flex h-full flex-col overflow-hidden rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] shadow-[var(--shadow-card)] transition-colors hover:border-[var(--border-strong)]"
     >
-      <div className="relative m-auto mt-3 aspect-video w-11/12 shrink-0 overflow-hidden rounded-lg transition-transform duration-300 ease-out group-hover:scale-105">
+      <div className="relative aspect-video w-full shrink-0 overflow-hidden bg-[var(--bg-surface-raised)]">
         {p.cover_image ? (
           <img
             src={getAssetUrl(p.cover_image) ?? ''}
             alt={p.name}
             loading="lazy"
-            className="h-full w-full origin-center object-cover"
+            className="h-full w-full object-cover"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-indigo-500 to-violet-500 text-4xl font-bold text-white">
+          <div className="flex h-full w-full items-center justify-center bg-[var(--bg-surface-raised)] text-2xl font-semibold text-[var(--text-tertiary)]">
             {p.name.charAt(0).toUpperCase()}
           </div>
         )}
       </div>
-
-      <div className="flex flex-1 flex-col gap-2.5 p-5 dark:text-white">
-        <h3 className="line-clamp-3 text-justify text-base font-bold leading-snug text-gray-950 dark:text-white">
+      <div className="flex flex-1 flex-col gap-1.5 px-5 pt-4 pb-3">
+        <h3 className="text-sm font-semibold text-[var(--text-primary)]">
           {p.url ? (
-            <a
-              href={p.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="transition hover:text-indigo-600 dark:hover:text-indigo-400"
-            >
-              {p.name}
-            </a>
-          ) : (
-            p.name
-          )}
+            <a href={p.url} target="_blank" rel="noopener noreferrer" className="transition hover:text-[var(--accent)]">{p.name}</a>
+          ) : p.name}
         </h3>
         {p.description && (
-          <p className="line-clamp-4 text-justify text-sm leading-relaxed text-gray-500 dark:text-gray-300">
-            {p.description}
-          </p>
+          <p className="line-clamp-2 text-[13px] text-[var(--text-secondary)]">{p.description}</p>
         )}
         {p.technologies && (
-          <p className="text-xs text-gray-400 dark:text-gray-400">{p.technologies}</p>
+          <p className="text-xs text-[var(--text-tertiary)]">{p.technologies}</p>
         )}
-        <p className="text-xs text-gray-400 dark:text-gray-500">
+        <p className="text-xs text-[var(--text-tertiary)]">
           by {p.owner ? [p.owner.first_name, p.owner.last_name].filter(Boolean).join(' ') || p.owner.username : 'unknown'}
         </p>
-      </div>
-
-      <div className="mt-auto flex items-center justify-between gap-2 border-t border-gray-100 px-5 py-2.5 dark:border-gray-800">
-        <div className="flex items-center gap-1.5">
-          {p.url && (
-            <a
-              href={p.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-semibold text-indigo-600 transition hover:bg-indigo-50 dark:text-indigo-400 dark:hover:bg-indigo-950"
-            >
-              <LinkIcon className="h-3.5 w-3.5" />
-              View project
-            </a>
-          )}
-          {p.owner?.username && (
-            <Link
-              to={`/${p.owner.username}`}
-              className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-semibold text-gray-600 transition hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
-            >
-              Owner's profile
-            </Link>
-          )}
-        </div>
       </div>
     </article>
   )
@@ -293,23 +257,23 @@ export default function HomePage() {
     const list = results()
     const isEmpty = list.length === 0
     return (
-      <section className="mx-auto max-w-6xl px-4 pb-16">
-        <div className="mb-6 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+      <section className="mx-auto max-w-[1200px] px-6 pb-16 max-sm:px-4">
+        <div className="mb-5 flex items-center justify-between">
+          <h2 className="text-base font-semibold text-[var(--text-primary)]">
             {isEmpty ? 'No results' : `${list.length} result${list.length !== 1 ? 's' : ''}`}
           </h2>
           <button
             onClick={clearResults}
-            className="text-sm font-medium text-indigo-600 hover:underline dark:text-indigo-400"
+            className="text-[13px] font-medium text-[var(--accent)] hover:underline"
           >
             Clear search
           </button>
         </div>
 
         {isEmpty ? (
-          <div className="rounded-2xl border border-dashed border-gray-300 bg-white/50 p-12 text-center dark:border-gray-700 dark:bg-gray-900/50">
-            <SearchIcon className="mx-auto h-12 w-12 text-gray-300 dark:text-gray-600" />
-            <p className="mt-4 text-gray-500 dark:text-gray-400">
+          <div className="rounded-xl border border-dashed border-[var(--border-subtle)] bg-[var(--bg-surface-raised)]/50 p-12 text-center">
+            <SearchIcon className="mx-auto h-10 w-10 text-[var(--border-strong)]" />
+            <p className="mt-3 text-sm text-[var(--text-tertiary)]">
               Nothing matched your search. Try different criteria.
             </p>
           </div>
@@ -328,69 +292,64 @@ export default function HomePage() {
     <div>
       {/* Hero */}
       <section className="relative overflow-hidden">
-        <div className="pointer-events-none absolute inset-0 -z-10">
-          <div className="absolute -top-24 right-0 h-72 w-72 rounded-full bg-indigo-400/20 blur-3xl dark:bg-indigo-500/20" />
-          <div className="absolute left-1/4 top-1/2 h-72 w-72 rounded-full bg-violet-400/20 blur-3xl dark:bg-violet-500/10" />
-        </div>
-
-        <div className="mx-auto max-w-6xl px-4 pt-20 pb-16 text-center sm:pt-28 sm:pb-20">
-          <span className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-4 py-1.5 text-sm font-medium text-indigo-700 dark:border-indigo-800 dark:bg-indigo-950 dark:text-indigo-300">
-            <span className="h-2 w-2 animate-pulse rounded-full bg-indigo-500" />
+        <div className="mx-auto max-w-[1200px] px-6 pt-20 pb-16 text-center sm:pt-28 sm:pb-20 max-sm:px-4">
+          <span className="inline-flex items-center gap-2 rounded-full border border-[var(--border-subtle)] bg-[var(--bg-surface-raised)] px-3.5 py-1 text-xs font-medium text-[var(--text-secondary)]">
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[var(--accent)]" />
             Portfolios for every profession
           </span>
 
-          <h1 className="mt-6 text-4xl font-bold tracking-tight text-gray-900 dark:text-gray-50 sm:text-6xl">
+          <h1 className="mt-6 text-4xl font-semibold tracking-tight text-[var(--text-primary)] sm:text-5xl">
             Your professional story,
-            <span className="block bg-gradient-to-r from-indigo-500 via-violet-500 to-fuchsia-500 bg-clip-text text-transparent">
+            <span className="block text-[var(--accent)]">
               beautifully told.
             </span>
           </h1>
 
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-500 dark:text-gray-400">
+          <p className="mx-auto mt-5 max-w-xl text-[var(--text-secondary)]">
             Create a stunning resume and project portfolio that stands out. Get discovered
             by employers searching for talent across every field.
           </p>
 
-          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
             {user ? (
               <Link
                 to={`/${user.username}`}
-                className="rounded-full bg-indigo-600 px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-indigo-600/30 transition hover:bg-indigo-700 hover:shadow-indigo-600/40"
+                className="rounded-lg bg-[var(--accent)] px-6 py-2.5 text-sm font-semibold text-[#0a0a0b] transition hover:opacity-90"
               >
                 View my page
               </Link>
             ) : (
               <Link
                 to="/login"
-                className="rounded-full bg-indigo-600 px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-indigo-600/30 transition hover:bg-indigo-700 hover:shadow-indigo-600/40"
+                className="rounded-lg bg-[var(--accent)] px-6 py-2.5 text-sm font-semibold text-[#0a0a0b] transition hover:opacity-90"
               >
                 Get started
               </Link>
             )}
             <Link
               to={user ? `/${user.username}` : '/login'}
-              className="rounded-full border border-gray-300 bg-white px-8 py-3.5 text-base font-semibold text-gray-700 transition hover:border-gray-400 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+              className="rounded-lg border border-[var(--border-subtle)] bg-transparent px-6 py-2.5 text-sm font-semibold text-[var(--text-secondary)] transition hover:border-[var(--border-strong)] hover:text-[var(--text-primary)]"
             >
               {user ? 'My portfolio' : 'Create portfolio'}
             </Link>
           </div>
 
           {/* Search */}
-          <div className="mx-auto mt-14 max-w-3xl">
-            <label className="mb-3 block text-sm font-medium text-gray-500 dark:text-gray-400">
+          <div className="mx-auto mt-12 max-w-2xl">
+            <label className="mb-2 block text-xs font-medium uppercase tracking-wide text-[var(--text-tertiary)]">
               Find talent, roles, and projects
             </label>
 
             {/* Tabs */}
-            <div className="mb-4 inline-flex rounded-full border border-gray-200 bg-white p-1 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+            <div className="mb-3 inline-flex rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-0.5">
               {TABS.map((t) => (
                 <button
                   key={t.id}
                   onClick={() => { setTab(t.id); setSearched(false); setSearchParams({ tab: t.id }) }}
-                  className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
+                  className={`rounded-md px-3 py-1.5 text-[13px] font-medium transition ${
                     tab === t.id
-                      ? 'bg-indigo-600 text-white shadow-sm'
-                      : 'text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100'
+                      ? 'bg-[var(--accent)] text-[#0a0a0b]'
+                      : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                   }`}
                 >
                   {t.label}
@@ -400,14 +359,14 @@ export default function HomePage() {
 
             <div className="flex gap-2">
               <div className="relative flex-1">
-                <SearchIcon className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
+                <SearchIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-tertiary)]" />
                 {tab === 'filter' && (
                   <input
                     value={filterForm.name}
                     onChange={(e) => setFilter('name', e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && runFilterSearch()}
                     placeholder="Name (optional)"
-                    className="w-full rounded-full border border-gray-300 bg-white py-3.5 pl-11 pr-4 text-gray-900 placeholder-gray-400 shadow-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                    className="w-full rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-surface)] py-2.5 pl-9 pr-3 text-sm text-[var(--text-primary)] placeholder-[var(--text-tertiary)] outline-none transition focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]/20"
                   />
                 )}
                 {tab === 'people' && (
@@ -416,7 +375,7 @@ export default function HomePage() {
                     onChange={(e) => setPeopleQuery(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && runPeopleSearch()}
                     placeholder="Search people by name..."
-                    className="w-full rounded-full border border-gray-300 bg-white py-3.5 pl-11 pr-4 text-gray-900 placeholder-gray-400 shadow-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                    className="w-full rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-surface)] py-2.5 pl-9 pr-3 text-sm text-[var(--text-primary)] placeholder-[var(--text-tertiary)] outline-none transition focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]/20"
                   />
                 )}
                 {tab === 'projects' && (
@@ -425,7 +384,7 @@ export default function HomePage() {
                     onChange={(e) => setProjectQuery(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && runProjectSearch()}
                     placeholder="Search projects by name or description..."
-                    className="w-full rounded-full border border-gray-300 bg-white py-3.5 pl-11 pr-4 text-gray-900 placeholder-gray-400 shadow-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                    className="w-full rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-surface)] py-2.5 pl-9 pr-3 text-sm text-[var(--text-primary)] placeholder-[var(--text-tertiary)] outline-none transition focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]/20"
                   />
                 )}
               </div>
@@ -436,7 +395,7 @@ export default function HomePage() {
                   else runProjectSearch()
                 }}
                 disabled={searching}
-                className="rounded-full bg-indigo-600 px-6 py-3.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 disabled:opacity-60"
+                className="rounded-lg bg-[var(--accent)] px-5 py-2.5 text-sm font-semibold text-[#0a0a0b] transition hover:opacity-90 disabled:opacity-60"
               >
                 {searching ? 'Searching...' : 'Search'}
               </button>
@@ -445,41 +404,41 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Filter panel (advanced criteria) */}
+      {/* Filter panel */}
       {tab === 'filter' && (
-        <section className="mx-auto -mt-6 max-w-4xl px-4 mb-10">
-          <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-900">
-            <p className="mb-4 text-xs font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">
+        <section className="mx-auto -mt-4 max-w-3xl px-6 mb-10 max-sm:px-4">
+          <div className="rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-5 shadow-[var(--shadow-card)]">
+            <p className="mb-3 text-[11px] font-semibold uppercase tracking-wide text-[var(--text-tertiary)]">
               Filter by (fill any — combined)
             </p>
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-4">
               <input
                 value={filterForm.job_title}
                 onChange={(e) => setFilter('job_title', e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && runFilterSearch()}
                 placeholder="Job title"
-                className="rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 placeholder-gray-400 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-surface)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder-[var(--text-tertiary)] outline-none transition focus:border-[var(--accent)]"
               />
               <input
                 value={filterForm.skills}
                 onChange={(e) => setFilter('skills', e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && runFilterSearch()}
                 placeholder="Skills (comma separated)"
-                className="rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 placeholder-gray-400 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-surface)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder-[var(--text-tertiary)] outline-none transition focus:border-[var(--accent)]"
               />
               <input
                 value={filterForm.experience}
                 onChange={(e) => setFilter('experience', e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && runFilterSearch()}
                 placeholder="Experience (job / company)"
-                className="rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 placeholder-gray-400 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-surface)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder-[var(--text-tertiary)] outline-none transition focus:border-[var(--accent)]"
               />
               <input
                 value={filterForm.education}
                 onChange={(e) => setFilter('education', e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && runFilterSearch()}
                 placeholder="Education field"
-                className="rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 placeholder-gray-400 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-surface)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder-[var(--text-tertiary)] outline-none transition focus:border-[var(--accent)]"
               />
             </div>
           </div>
@@ -490,28 +449,28 @@ export default function HomePage() {
       {searched && renderResults()}
 
       {/* Features */}
-      <section className="border-t border-gray-200 bg-white py-20 dark:border-gray-700 dark:bg-gray-900/50">
-        <div className="mx-auto max-w-6xl px-4">
-          <div className="mx-auto max-w-2xl text-center">
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-50">
+      <section className="border-t border-[var(--border-subtle)] bg-[var(--bg-surface-raised)]/30 py-20">
+        <div className="mx-auto max-w-[1200px] px-6 max-sm:px-4">
+          <div className="mx-auto max-w-xl text-center">
+            <h2 className="text-2xl font-semibold tracking-tight text-[var(--text-primary)]">
               Everything you need to shine
             </h2>
-            <p className="mt-3 text-gray-500 dark:text-gray-400">
+            <p className="mt-2 text-[var(--text-secondary)]">
               A complete toolkit to present your career and projects professionally.
             </p>
           </div>
 
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {FEATURES.map((f) => (
               <div
                 key={f.title}
-                className="group rounded-2xl border border-gray-200 bg-gray-50 p-6 transition hover:border-indigo-200 hover:shadow-md dark:border-gray-700 dark:bg-gray-900 dark:hover:border-indigo-800"
+                className="rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-5 transition-colors hover:border-[var(--border-strong)]"
               >
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-100 text-indigo-600 transition group-hover:bg-indigo-600 group-hover:text-white dark:bg-indigo-900/40 dark:text-indigo-300">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[var(--bg-surface-raised)] text-[var(--text-tertiary)]">
                   {f.icon}
                 </div>
-                <h3 className="mt-4 text-lg font-semibold text-gray-900 dark:text-gray-100">{f.title}</h3>
-                <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">{f.desc}</p>
+                <h3 className="mt-3 text-sm font-semibold text-[var(--text-primary)]">{f.title}</h3>
+                <p className="mt-1 text-[13px] text-[var(--text-secondary)]">{f.desc}</p>
               </div>
             ))}
           </div>
@@ -519,22 +478,18 @@ export default function HomePage() {
       </section>
 
       {/* CTA */}
-      <section className="mx-auto max-w-6xl px-4 py-20">
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-indigo-600 to-violet-600 p-12 text-center shadow-xl sm:p-16">
-          <div className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-white/10 blur-2xl" />
-          <div className="pointer-events-none absolute -bottom-16 -left-16 h-64 w-64 rounded-full bg-white/10 blur-2xl" />
-          <div className="relative">
-            <h2 className="text-3xl font-bold text-white sm:text-4xl">Ready to build your portfolio?</h2>
-            <p className="mx-auto mt-4 max-w-xl text-indigo-100">
-              Join professionals across every field. Create your page in minutes and start getting discovered.
-            </p>
-            <Link
-              to={user ? `/${user.username}` : '/login'}
-              className="mt-8 inline-flex items-center gap-2 rounded-full bg-white px-8 py-3.5 text-base font-semibold text-indigo-700 shadow-lg transition hover:bg-indigo-50"
-            >
-              Create your portfolio →
-            </Link>
-          </div>
+      <section className="mx-auto max-w-[1200px] px-6 py-20 max-sm:px-4">
+        <div className="rounded-xl bg-[var(--bg-surface)] border border-[var(--border-subtle)] p-10 text-center shadow-[var(--shadow-card)] sm:p-14">
+          <h2 className="text-2xl font-semibold tracking-tight text-[var(--text-primary)]">Ready to build your portfolio?</h2>
+          <p className="mx-auto mt-3 max-w-lg text-[var(--text-secondary)]">
+            Join professionals across every field. Create your page in minutes and start getting discovered.
+          </p>
+          <Link
+            to={user ? `/${user.username}` : '/login'}
+            className="mt-7 inline-flex items-center gap-2 rounded-lg bg-[var(--accent)] px-6 py-2.5 text-sm font-semibold text-[#0a0a0b] transition hover:opacity-90"
+          >
+            Create your portfolio →
+          </Link>
         </div>
       </section>
     </div>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import Modal from './Modal'
 import { Field, Input, Textarea, Button } from './ui'
+import AutocompleteInput from './AutocompleteInput'
 import { getAssetUrl } from '../lib/constants'
 import type {
   Experience,
@@ -78,7 +79,12 @@ export default function SectionFormModal({
         {(formType === 'experience') && (
           <>
             <Field label="Job Title">
-              <Input value={(form.job as string) ?? ''} onChange={(e) => set('job', e.target.value)} required />
+              <AutocompleteInput
+                type="job_title"
+                value={(form.job as string) ?? ''}
+                onChange={(v) => set('job', v)}
+                required
+              />
             </Field>
             <Field label="Company">
               <Input value={(form.company as string) ?? ''} onChange={(e) => set('company', e.target.value)} required />
@@ -117,7 +123,12 @@ export default function SectionFormModal({
         {formType === 'skill' && (
           <>
             <Field label="Skill">
-              <Input value={(form.name as string) ?? ''} onChange={(e) => set('name', e.target.value)} required />
+              <AutocompleteInput
+                type="skill"
+                value={(form.name as string) ?? ''}
+                onChange={(v) => set('name', v)}
+                required
+              />
             </Field>
             <Field label="Level (%)">
               <Input
@@ -130,9 +141,9 @@ export default function SectionFormModal({
                 placeholder="0-100"
               />
               <p className="mt-1.5 flex items-center gap-2 text-xs">
-                <span className="font-medium text-indigo-600 dark:text-indigo-400">{skillLevelLabel(skillLevel)}</span>
-                <span className="text-gray-300 dark:text-gray-600">·</span>
-                <span className="text-gray-400 dark:text-gray-500">{skillLevelNames}</span>
+                <span className="font-medium text-[var(--accent)]">{skillLevelLabel(skillLevel)}</span>
+                <span className="text-[var(--border-strong)]">·</span>
+                <span className="text-[var(--text-tertiary)]">{skillLevelNames}</span>
               </p>
             </Field>
           </>
@@ -141,7 +152,12 @@ export default function SectionFormModal({
         {formType === 'education' && (
           <>
             <Field label="Field of Study">
-              <Input value={(form.field as string) ?? ''} onChange={(e) => set('field', e.target.value)} required />
+              <AutocompleteInput
+                type="field"
+                value={(form.field as string) ?? ''}
+                onChange={(v) => set('field', v)}
+                required
+              />
             </Field>
             <Field label="Institution">
               <Input value={(form.edu_place as string) ?? ''} onChange={(e) => set('edu_place', e.target.value)} required />
@@ -178,7 +194,13 @@ export default function SectionFormModal({
               <Textarea value={(form.description as string) ?? ''} onChange={(e) => set('description', e.target.value)} />
             </Field>
             <Field label="Technologies">
-              <Input value={(form.technologies as string) ?? ''} onChange={(e) => set('technologies', e.target.value)} placeholder="Comma separated, e.g. React, Django" />
+              <AutocompleteInput
+                type="technology"
+                value={(form.technologies as string) ?? ''}
+                onChange={(v) => set('technologies', v)}
+                placeholder="Comma separated, e.g. React, Django"
+                commaSeparated
+              />
             </Field>
             <Field label="Cover Image (Max 5MB)">
               <Input
@@ -190,15 +212,10 @@ export default function SectionFormModal({
                 }}
               />
               {typeof form.cover_image === 'string' && (
-                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  Current image
-                </p>
-              )}
-              {typeof form.cover_image === 'string' && (
                 <img
                   src={getAssetUrl(form.cover_image) ?? ''}
                   alt="Current cover"
-                  className="mt-2 h-24 w-40 rounded-lg border border-gray-200 object-cover dark:border-gray-700"
+                  className="mt-2 h-20 w-36 rounded-lg border border-[var(--border-subtle)] object-cover"
                 />
               )}
             </Field>

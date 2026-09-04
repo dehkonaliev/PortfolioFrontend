@@ -93,6 +93,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setTokens(nextTokens)
   }, [])
 
+  const refreshUser = useCallback(async () => {
+    const stored = readStoredTokens()
+    if (!stored.access) return
+    try {
+      const res = await api.get('/me')
+      const data = res.data?.data
+      if (data) {
+        const normalized = {
+          id: data.id,
+          username: data.username,
+          first_name: data.first_name,
+          last_name: data.last_name,
+          email: data.email,
+          job_title: data.job_title,
+          profile_thumbnail: data.profile_thumbnail,
+        }
+        const latest = readStoredTokens()
+        localStorage.setItem(
+          TOKEN_STORAGE_KEY,
+          JSON.stringify({
+            access: latest.access,
+            refresh: latest.refresh,
+            user: normalized,
+          }),
+        )
+        setUser(normalized as unknown as Record<string, unknown>)
+      }
+    } catch {
+      // keep anonymous if refresh fails
+    }
+  }, [])
+
   const login = useCallback(async (username: string, password: string) => {
     const res = await api.post('/login', { username, password })
     const data = res.data?.data
@@ -108,7 +140,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     )
     setTokens({ access, refresh })
     setUser(userData)
-  }, [])
+    void refreshUser()
+  }, [refreshUser])
 
   const logout = useCallback(async () => {
     const stored = readStoredTokens()
@@ -139,10 +172,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const signup = useCallback(async (data: SignupData) => {
-    // Step 2: verify the email + code to obtain the account-creation token
     const verificationToken = await verifyCode(data.email, data.code)
-
-    // Step 3: create the account with the token + credentials
     await api.post('/create-account', {
       token: verificationToken,
       username: data.username,
@@ -151,41 +181,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       password: data.password,
       conf_password: data.conf_password,
     })
-
-    // Auto login after account creation to obtain JWTs
     await login(data.username, data.password)
   }, [verifyCode, login])
-
-  const refreshUser = useCallback(async () => {
-    if (!tokens) return
-    try {
-      const res = await api.get('/me')
-      const data = res.data?.data
-      if (data) {
-        const normalized = {
-          id: data.id,
-          username: data.username,
-          first_name: data.first_name,
-          last_name: data.last_name,
-          email: data.email,
-          job_title: data.job_title,
-          profile_thumbnail: data.profile_thumbnail,
-        }
-        const stored = readStoredTokens()
-        localStorage.setItem(
-          TOKEN_STORAGE_KEY,
-          JSON.stringify({
-            access: stored.access ?? tokens.access,
-            refresh: stored.refresh ?? tokens.refresh,
-            user: normalized,
-          }),
-        )
-        setUser(normalized as unknown as Record<string, unknown>)
-      }
-    } catch {
-      // keep anonymous if refresh fails
-    }
-  }, [tokens])
 
   const deleteAccount = useCallback(async () => {
     await api.delete('/delete-account')
@@ -196,11 +193,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (tokens?.access) {
-      // silently refresh user info on mount
       void refreshUser()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [tokens?.access])
 
   const value = useMemo(
     () => ({ user, tokens, login, signup, requestVerification, verifyCode, logout, refreshUser, setAuthUser, deleteAccount }),
