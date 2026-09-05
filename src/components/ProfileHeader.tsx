@@ -1,14 +1,19 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import type { PublicProfile } from '../types'
 import { getAssetUrl, BASE_URL } from '../lib/constants'
+import { useAuth } from '../context/AuthContext'
 import {
   BriefcaseIcon,
   CloseIcon,
   LinkIcon,
   CheckIcon,
+  EditIcon,
 } from './icons'
 
 export default function ProfileHeader({ profile }: { profile: PublicProfile }) {
+  const { user } = useAuth()
+  const isOwner = !!user && user.id === profile.id
   const photoUrl = getAssetUrl(profile.profile_photo || profile.profile_thumbnail)
   const fullName = [profile.first_name, profile.last_name].filter(Boolean).join(' ') || profile.username
   const [previewOpen, setPreviewOpen] = useState(false)
@@ -93,6 +98,16 @@ export default function ProfileHeader({ profile }: { profile: PublicProfile }) {
                   {copied ? <CheckIcon className="h-3.5 w-3.5" /> : <LinkIcon className="h-3.5 w-3.5" />}
                   {copied ? 'Copied!' : 'Copy resume link'}
                 </button>
+                {isOwner && (
+                  <Link
+                    to="/settings"
+                    title="Edit profile"
+                    className="inline-flex items-center gap-1.5 ml-2 mt-2 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-surface)] px-3.5 py-1.5 text-[13px] font-medium text-[var(--text-secondary)] shadow-[var(--shadow-card)] transition hover:border-[var(--border-strong)] hover:text-[var(--text-primary)]"
+                  >
+                    <EditIcon className="h-3.5 w-3.5" />
+                    Edit profile
+                  </Link>
+                )}
               </div>
             </div>
 
