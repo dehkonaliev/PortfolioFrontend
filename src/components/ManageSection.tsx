@@ -426,10 +426,15 @@ export default function ManageSection({ type, profile, profileOwnerId, onUpdated
           </TimelineList>
         ) : type === 'skills' ? (
           <div className="flex flex-col gap-2">
+            {type === 'skills' && items.length > 0 && (
+              <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-surface-raised)] px-4 py-3 text-sm text-[var(--text-secondary)]">
+                I know {listFromType(profile, 'skills').map((s: Skill) => s.name).join(', ')}
+              </div>
+            )}
             {reordering && (
               <div className="mb-1 flex items-center justify-between gap-3 rounded-lg border border-[var(--accent)] bg-[var(--accent-soft)] px-3 py-2">
                 <p className="text-[13px] font-medium text-[var(--accent)]">
-                  Drag skills to reorder them, then save.
+                  Drag skills to reorder them, then save. You can only drag them up.
                 </p>
                 <Button variant="ghost" className="px-2 py-1 text-[13px]" onClick={cancelReorder}>
                   Cancel
