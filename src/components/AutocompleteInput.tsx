@@ -62,7 +62,7 @@ export default function AutocompleteInput({
               value: String(d[Object.keys(d)[0]] ?? ''),
               usage_counts: Number(d.usage_counts ?? 0),
             }))
-            .filter((s) => s.value),
+            .filter((s: Suggestion) => s.value),
         )
       } catch {
         if (active) setSuggestions([])

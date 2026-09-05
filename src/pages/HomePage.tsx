@@ -5,7 +5,7 @@ import { usePageTitle } from '../hooks/usePageTitle'
 import api from '../api/axios'
 import type { SearchUser, SearchProject } from '../types'
 import { getAssetUrl } from '../lib/constants'
-import { SearchIcon, BriefcaseIcon, FolderIcon, GraduationIcon, AwardIcon, LinkIcon } from '../components/icons'
+import { SearchIcon, BriefcaseIcon, FolderIcon, GraduationIcon, AwardIcon } from '../components/icons'
 
 const FEATURES = [
   {
