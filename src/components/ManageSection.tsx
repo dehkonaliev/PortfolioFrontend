@@ -426,9 +426,9 @@ export default function ManageSection({ type, profile, profileOwnerId, onUpdated
           </TimelineList>
         ) : type === 'skills' ? (
           <div className="flex flex-col gap-2">
-            {type === 'skills' && items.length > 0 && (
+            {type === 'skills' && (items as Skill[]).length > 0 && (
               <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-surface-raised)] px-4 py-3 text-sm text-[var(--text-secondary)]">
-                I know {listFromType(profile, 'skills').map((s: Skill) => s.name).join(', ')}
+                I know {(items as Skill[]).map((s) => s.name).join(', ')}
               </div>
             )}
             {reordering && (
