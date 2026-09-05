@@ -88,7 +88,7 @@ export default function ProfileHeader({ profile }: { profile: PublicProfile }) {
                   type="button"
                   onClick={copyResumeLink}
                   title={`Copy ${resumeUrl}`}
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--accent)] bg-[var(--accent-soft)] px-3.5 py-1.5 text-[13px] font-medium text-[var(--accent)] shadow-[var(--shadow-card)] transition hover:border-[var(--accent)] hover:bg-[var(--accent)] hover:text-white"
+                  className="inline-flex items-center gap-1.5 ml-2 mt-2 rounded-lg border border-[var(--accent)] bg-[var(--accent-soft)] px-3.5 py-1.5 text-[13px] font-medium text-[var(--accent)] shadow-[var(--shadow-card)] transition hover:border-[var(--accent)] hover:bg-[var(--accent)] hover:text-white"
                 >
                   {copied ? <CheckIcon className="h-3.5 w-3.5" /> : <LinkIcon className="h-3.5 w-3.5" />}
                   {copied ? 'Copied!' : 'Copy resume link'}
