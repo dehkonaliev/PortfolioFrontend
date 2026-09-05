@@ -7,9 +7,10 @@ interface SectionProps {
   isOwner: boolean
   onAdd: () => void
   children: ReactNode
+  extraActions?: ReactNode
 }
 
-export default function Section({ title, icon, isOwner, onAdd, children }: SectionProps) {
+export default function Section({ title, icon, isOwner, onAdd, children, extraActions }: SectionProps) {
   return (
     <section className="rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] shadow-[var(--shadow-card)]">
       <div className="flex items-center justify-between gap-3 border-b border-[var(--border-subtle)] px-6 py-4">
@@ -20,13 +21,16 @@ export default function Section({ title, icon, isOwner, onAdd, children }: Secti
           <h2 className="text-base font-semibold text-[var(--text-primary)]">{title}</h2>
         </div>
         {isOwner && (
-          <button
-            onClick={onAdd}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--accent)] px-3 py-1.5 text-[13px] font-semibold text-[#0a0a0b] transition hover:opacity-90 active:scale-[0.98]"
-          >
-            <PlusIcon className="h-3.5 w-3.5" />
-            Add
-          </button>
+          <div className="flex items-center gap-2">
+            {extraActions}
+            <button
+              onClick={onAdd}
+              className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--accent)] px-3 py-1.5 text-[13px] font-semibold text-[#0a0a0b] transition hover:opacity-90 active:scale-[0.98]"
+            >
+              <PlusIcon className="h-3.5 w-3.5" />
+              Add
+            </button>
+          </div>
         )}
       </div>
       <div className="p-6">

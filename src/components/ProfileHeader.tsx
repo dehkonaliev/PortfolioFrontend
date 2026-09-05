@@ -1,15 +1,37 @@
 import { useEffect, useState } from 'react'
 import type { PublicProfile } from '../types'
-import { getAssetUrl } from '../lib/constants'
+import { getAssetUrl, BASE_URL } from '../lib/constants'
 import {
   BriefcaseIcon,
   CloseIcon,
+  LinkIcon,
+  CheckIcon,
 } from './icons'
 
 export default function ProfileHeader({ profile }: { profile: PublicProfile }) {
   const photoUrl = getAssetUrl(profile.profile_photo || profile.profile_thumbnail)
   const fullName = [profile.first_name, profile.last_name].filter(Boolean).join(' ') || profile.username
   const [previewOpen, setPreviewOpen] = useState(false)
+  const [copied, setCopied] = useState(false)
+  const resumeUrl = `${BASE_URL}/${profile.username}`
+
+  const copyResumeLink = async () => {
+    try {
+      await navigator.clipboard.writeText(resumeUrl)
+    } catch {
+      const el = document.createElement('textarea')
+      el.value = resumeUrl
+      document.body.appendChild(el)
+      el.select()
+      try {
+        document.execCommand('copy')
+      } finally {
+        document.body.removeChild(el)
+      }
+    }
+    setCopied(true)
+    window.setTimeout(() => setCopied(false), 2000)
+  }
 
   useEffect(() => {
     if (!previewOpen) return
@@ -62,6 +84,15 @@ export default function ProfileHeader({ profile }: { profile: PublicProfile }) {
                     {profile.job_title}
                   </span>
                 )}
+                <button
+                  type="button"
+                  onClick={copyResumeLink}
+                  title={`Copy ${resumeUrl}`}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--accent)] bg-[var(--accent-soft)] px-3.5 py-1.5 text-[13px] font-medium text-[var(--accent)] shadow-[var(--shadow-card)] transition hover:border-[var(--accent)] hover:bg-[var(--accent)] hover:text-white"
+                >
+                  {copied ? <CheckIcon className="h-3.5 w-3.5" /> : <LinkIcon className="h-3.5 w-3.5" />}
+                  {copied ? 'Copied!' : 'Copy resume link'}
+                </button>
               </div>
             </div>
 

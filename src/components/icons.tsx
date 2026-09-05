@@ -23,4 +23,8 @@ export {
   Send as SendIcon,
   Link2 as LinkedinIcon,
   IdCard as IdIcon,
+  GripVertical as GripVerticalIcon,
+  ListOrdered as ListOrderedIcon,
+  ChevronLeft as ChevronLeftIcon,
+  Check as CheckIcon,
 } from 'lucide-react'

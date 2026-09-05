@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import api from '../api/axios'
 import type {
   Experience,
@@ -22,6 +22,7 @@ import {
   FolderIcon,
   CalendarIcon,
 } from './icons'
+import { ChevronDownIcon, ChevronLeftIcon, ListOrderedIcon } from './icons'
 import { EmptyState } from './States'
 import { getAssetUrl } from '../lib/constants'
 import { useAuth } from '../context/AuthContext'
@@ -35,6 +36,20 @@ import { rangeText, durationLabel } from '../lib/timelineUtils'
 import { ExternalLinkIcon } from './icons'
 
 type ResourceType = 'experiences' | 'languages' | 'skills' | 'educations' | 'projects'
+
+const SKILLS_PER_PAGE = 7
+
+interface DragSession {
+  pointerId: number
+  fromId: string
+  startIndex: number
+  hoveredId: string | null
+  ghost: HTMLDivElement | null
+  offsetX: number
+  offsetY: number
+  onMove: (e: PointerEvent) => void
+  onUp: () => void
+}
 
 interface ManageSectionProps {
   type: ResourceType
@@ -88,9 +103,32 @@ export default function ManageSection({ type, profile, profileOwnerId, onUpdated
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null)
   const [deleteError, setDeleteError] = useState<string | null>(null)
 
+  const [skillsExpanded, setSkillsExpanded] = useState(false)
+  const [reordering, setReordering] = useState(false)
+  const dragStateRef = useRef<DragSession | null>(null)
+  const reorderOrderRef = useRef<string[] | null>(null)
+  const [reorderOrder, setReorderOrder] = useState<string[] | null>(null)
+  const [reorderError, setReorderError] = useState<string | null>(null)
+  const [reorderSaving, setReorderSaving] = useState(false)
+
   const meta = METADATA[type]
   const items = listFromType(profile, type) as unknown[]
   const endpoint = endpointFromType(type)
+
+  const displayedSkills = useMemo(() => {
+    if (type !== 'skills') return []
+    const sorted = [...(items as Skill[])]
+    if (reorderOrder) {
+      const byId = new Map(sorted.map((s) => [s.id, s]))
+      sorted.sort((a, b) => {
+        const ia = reorderOrder.indexOf(a.id)
+        const ib = reorderOrder.indexOf(b.id)
+        return (ia === -1 ? Number.MAX_SAFE_INTEGER : ia) - (ib === -1 ? Number.MAX_SAFE_INTEGER : ib)
+      })
+      return sorted.filter((s) => byId.has(s.id))
+    }
+    return sorted
+  }, [type, items, reorderOrder])
 
   const openAdd = () => {
     setEditing(null)
@@ -147,6 +185,148 @@ export default function ManageSection({ type, profile, profileOwnerId, onUpdated
     }
   }
 
+  const startReorder = () => {
+    const ids = (items as Skill[]).map((s) => s.id)
+    reorderOrderRef.current = ids
+    setReorderOrder(ids)
+    setReorderError(null)
+    setReordering(true)
+    setSkillsExpanded(true)
+  }
+
+  const endDrag = () => {
+    const drag = dragStateRef.current
+    if (drag) {
+      if (drag.ghost) drag.ghost.remove()
+      window.removeEventListener('pointermove', drag.onMove)
+      window.removeEventListener('pointerup', drag.onUp)
+      dragStateRef.current = null
+    }
+    document.body.style.userSelect = ''
+    document.body.style.cursor = ''
+  }
+
+  const persistDrag = () => {
+    const drag = dragStateRef.current
+    if (!drag) return
+    const newIndex = reorderOrderRef.current?.indexOf(drag.fromId) ?? -1
+    if (newIndex === -1 || newIndex === drag.startIndex) return
+    setReorderSaving(true)
+    setReorderError(null)
+    api
+      .patch(`/reorder-skill/${drag.fromId}`, { order: newIndex })
+      .then(() => onUpdated())
+      .catch((e: unknown) => setReorderError(extractError(e)))
+      .finally(() => setReorderSaving(false))
+  }
+
+  const cancelReorder = () => {
+    endDrag()
+    reorderOrderRef.current = null
+    setReorderOrder(null)
+    setReordering(false)
+    setSkillsExpanded(false)
+  }
+
+  const finishReorder = () => {
+    endDrag()
+    reorderOrderRef.current = null
+    setReorderOrder(null)
+    setReordering(false)
+    setSkillsExpanded(false)
+    onUpdated()
+  }
+
+  const reorderAround = (fromId: string, toId: string) => {
+    setReorderOrder((prev) => {
+      if (!prev) return prev
+      const next = [...prev]
+      const fromIndex = next.indexOf(fromId)
+      const toIndex = next.indexOf(toId)
+      if (fromIndex === -1 || toIndex === -1 || fromIndex === toIndex) return prev
+      next.splice(fromIndex, 1)
+      next.splice(toIndex, 0, fromId)
+      reorderOrderRef.current = next
+      return next
+    })
+  }
+
+  const startDrag = (e: React.PointerEvent<HTMLSpanElement>, skillId: string) => {
+    if (!reordering) return
+    e.preventDefault()
+    if (dragStateRef.current) return
+
+    const sourceEl = (e.currentTarget.closest('[data-skill-id]') ?? e.currentTarget) as HTMLElement
+    const rect = sourceEl.getBoundingClientRect()
+    const ghost = sourceEl.cloneNode(true) as HTMLDivElement
+    ghost.style.position = 'fixed'
+    ghost.style.left = `${rect.left}px`
+    ghost.style.top = `${rect.top}px`
+    ghost.style.width = `${rect.width}px`
+    ghost.style.margin = '0'
+    ghost.style.pointerEvents = 'none'
+    ghost.style.zIndex = '1000'
+    ghost.style.opacity = '0.9'
+    ghost.style.boxShadow = '0 10px 30px rgba(0,0,0,0.25)'
+    document.body.appendChild(ghost)
+
+    const offsetX = e.clientX - rect.left
+    const offsetY = e.clientY - rect.top
+    const pointerId = e.pointerId
+
+    document.body.style.userSelect = 'none'
+    document.body.style.cursor = 'grabbing'
+
+    const drag: DragSession = {
+      pointerId,
+      fromId: skillId,
+      startIndex: reorderOrderRef.current?.indexOf(skillId) ?? -1,
+      hoveredId: null,
+      ghost,
+      offsetX,
+      offsetY,
+      onMove: () => {},
+      onUp: () => {},
+    }
+
+    drag.onMove = (ev: PointerEvent) => {
+      if (ev.pointerId !== drag.pointerId) return
+      if (ev.buttons === 0) {
+        persistDrag()
+        endDrag()
+        return
+      }
+      drag.ghost!.style.left = `${ev.clientX - drag.offsetX}px`
+      drag.ghost!.style.top = `${ev.clientY - drag.offsetY}px`
+
+      const under = document.elementsFromPoint(ev.clientX, ev.clientY)
+      let targetId: string | null = null
+      for (const el of under) {
+        if (!(el instanceof HTMLElement)) continue
+        const id = el.getAttribute('data-skill-id')
+        if (id) {
+          targetId = id
+          break
+        }
+      }
+      if (targetId && targetId !== drag.fromId && drag.hoveredId !== targetId) {
+        drag.hoveredId = targetId
+        reorderAround(drag.fromId, targetId)
+      } else if (!targetId) {
+        drag.hoveredId = null
+      }
+    }
+
+    drag.onUp = () => {
+      persistDrag()
+      endDrag()
+    }
+
+    dragStateRef.current = drag
+    window.addEventListener('pointermove', drag.onMove)
+    window.addEventListener('pointerup', drag.onUp)
+  }
+
   // Hide blank sections entirely from visitors (only the owner sees the empty "Add" state)
   if (items.length === 0 && !isOwner) {
     return null
@@ -159,6 +339,20 @@ export default function ManageSection({ type, profile, profileOwnerId, onUpdated
         icon={meta.icon}
         isOwner={isOwner}
         onAdd={openAdd}
+        extraActions={
+          type === 'skills' && isOwner && items.length > 0 ? (
+            reordering ? (
+              <Button variant="outline" className="px-3 py-1.5 text-[13px]" onClick={finishReorder} disabled={reorderSaving}>
+                {reorderSaving ? 'Saving...' : 'Done'}
+              </Button>
+            ) : (
+              <Button variant="outline" className="px-3 py-1.5 text-[13px]" onClick={startReorder}>
+                <ListOrderedIcon className="h-3.5 w-3.5" />
+                Reorder
+              </Button>
+            )
+          ) : undefined
+        }
       >
         {items.length === 0 ? (
           <EmptyState
@@ -230,9 +424,65 @@ export default function ManageSection({ type, profile, profileOwnerId, onUpdated
               )
             }}
           </TimelineList>
+        ) : type === 'skills' ? (
+          <div className="flex flex-col gap-2">
+            {reordering && (
+              <div className="mb-1 flex items-center justify-between gap-3 rounded-lg border border-[var(--accent)] bg-[var(--accent-soft)] px-3 py-2">
+                <p className="text-[13px] font-medium text-[var(--accent)]">
+                  Drag skills to reorder them, then save.
+                </p>
+                <Button variant="ghost" className="px-2 py-1 text-[13px]" onClick={cancelReorder}>
+                  Cancel
+                </Button>
+              </div>
+            )}
+
+            {displayedSkills
+              .slice(0, reordering || skillsExpanded ? displayedSkills.length : SKILLS_PER_PAGE)
+              .map((skill) => (
+              <div
+                key={skill.id}
+                data-skill-id={skill.id}
+              >
+                <ItemCard
+                  isOwner={isOwner}
+                  onEdit={() => openEdit(skill as unknown as Record<string, unknown>)}
+                  onDelete={() => handleDelete(skill.id)}
+                  dragHandle={reordering}
+                  onGripPointerDown={(e) => startDrag(e, skill.id)}
+                >
+                  <RenderItem type={type} item={skill} />
+                </ItemCard>
+              </div>
+            ))}
+
+            {!reordering && !skillsExpanded && displayedSkills.length > SKILLS_PER_PAGE && (
+              <Button
+                variant="outline"
+                className="mt-1 w-full justify-center"
+                onClick={() => setSkillsExpanded(true)}
+              >
+                <ChevronDownIcon className="h-3.5 w-3.5" />
+                More ({displayedSkills.length - SKILLS_PER_PAGE})
+              </Button>
+            )}
+            {!reordering && skillsExpanded && displayedSkills.length > SKILLS_PER_PAGE && (
+              <Button
+                variant="outline"
+                className="mt-1 w-full justify-center"
+                onClick={() => setSkillsExpanded(false)}
+              >
+                <ChevronLeftIcon className="h-3.5 w-3.5" />
+                Show less
+              </Button>
+            )}
+            {reorderError && (
+              <p className="text-sm text-red-500">{reorderError}</p>
+            )}
+          </div>
         ) : (
           <div className="flex flex-col gap-2">
-            {(items as (LanguageType | Skill)[]).map((item) => (
+            {(items as LanguageType[]).map((item) => (
               <ItemCard
                 key={item.id}
                 isOwner={isOwner}
