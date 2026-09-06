@@ -64,7 +64,7 @@ export default function ProjectCard({
           )}
         </h3>
         {description && (
-          <p className="line-clamp-2 text-[13px] leading-relaxed text-[var(--text-secondary)]">
+          <p className="text-[13px] leading-relaxed text-[var(--text-secondary)]">
             {description}
           </p>
         )}
