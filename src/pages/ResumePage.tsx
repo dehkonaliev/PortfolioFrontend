@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from 'react'
 import { useParams, Link } from 'react-router-dom'
+import { Helmet } from 'react-helmet-async'
 import { usePublicProfile } from '../hooks/usePublicProfile'
 import { usePageTitle } from '../hooks/usePageTitle'
 import ProfileHeader from '../components/ProfileHeader'
@@ -10,7 +11,7 @@ import EndorsementsSection from '../components/EndorsementsSection'
 import { LoadingScreen, NotFoundState } from '../components/States'
 import { ChevronRightIcon } from '../components/icons-extras'
 import { FolderIcon } from '../components/icons'
-import { getAssetUrl } from '../lib/constants'
+import { getAssetUrl, BASE_URL } from '../lib/constants'
 import { useAuth } from '../context/AuthContext'
 import type { PublicProfile } from '../types'
 
@@ -58,8 +59,33 @@ export default function ResumePage() {
   const firstProjects = profile.projects.slice(0, 3)
   const hasMoreProjects = profile.projects.length > 3
 
+  const fullName = [profile.first_name, profile.last_name].filter(Boolean).join(' ') || profile.username
+  const metaTitle = profile.job_title
+    ? `${fullName} — ${profile.job_title}`
+    : `${fullName}`
+  const metaImage = getAssetUrl(profile.profile_photo || profile.profile_thumbnail)
+  const metaUrl = `${BASE_URL}/${profile.username}`
+  const metaDescription =
+    profile.summary ||
+    [profile.job_title, `@${profile.username}`].filter(Boolean).join(' · ')
+
   return (
     <div className="mx-auto max-w-[1200px] px-6 py-8 max-sm:px-4">
+      <Helmet>
+        <title>{metaTitle}</title>
+        <meta name="description" content={metaDescription} />
+        <link rel="canonical" href={metaUrl} />
+        <meta property="og:site_name" content="MyResume" />
+        <meta property="og:type" content="profile" />
+        <meta property="og:title" content={metaTitle} />
+        <meta property="og:description" content={metaDescription} />
+        {metaImage && <meta property="og:image" content={metaImage} />}
+        <meta property="og:url" content={metaUrl} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={metaTitle} />
+        <meta name="twitter:description" content={metaDescription} />
+        {metaImage && <meta name="twitter:image" content={metaImage} />}
+      </Helmet>
       <div className="lg:flex lg:items-start lg:gap-8">
         <SectionNav visibleSections={visibleSections} />
 

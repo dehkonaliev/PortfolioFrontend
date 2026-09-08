@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { usePageTitle } from '../hooks/usePageTitle'
+import MetaTags from '../components/MetaTags'
 import api from '../api/axios'
 import type { SearchUser, SearchProject } from '../types'
 import { getAssetUrl } from '../lib/constants'
@@ -50,7 +51,6 @@ export default function HomePage() {
   usePageTitle('MyResume — Find talent and projects')
   const { user } = useAuth()
   const [searchParams, setSearchParams] = useSearchParams()
-
   const initialTab = (searchParams.get('tab') as Tab) || 'filter'
   const initialQ = searchParams.get('q') ?? ''
 
@@ -290,6 +290,12 @@ export default function HomePage() {
 
   return (
     <div>
+      <MetaTags
+        title="MyResume — Find talent and projects"
+        description="Create a stunning resume and project portfolio. Get discovered by employers searching for talent across every field. Built by Maksudbek Dehkonaliev."
+        image="/cover.jpg"
+        url={`${window.location.origin}/`}
+      />
       {/* Hero */}
       <section className="relative overflow-hidden">
         <div className="mx-auto max-w-[1200px] px-6 pt-20 pb-16 text-center sm:pt-28 sm:pb-20 max-sm:px-4">
