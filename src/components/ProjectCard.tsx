@@ -110,7 +110,7 @@ export default function ProjectCard({
         </div>
 
         {isOwner && (
-          <div className="flex items-center gap-1">
+          <div className="print:hidden flex items-center gap-1">
             <button
               type="button"
               onClick={(e) => { e.stopPropagation(); onEdit() }}

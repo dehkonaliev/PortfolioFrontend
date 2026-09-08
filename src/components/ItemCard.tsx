@@ -23,7 +23,7 @@ export default function ItemCard({ isOwner, onEdit, onDelete, children, dragHand
       )}
       <div className="min-w-0 flex-1">{children}</div>
       {isOwner && (
-        <div className="flex shrink-0 items-center gap-1">
+        <div className="print:hidden flex shrink-0 items-center gap-1">
           <button
             type="button"
             onClick={onEdit}

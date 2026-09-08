@@ -59,11 +59,20 @@ export interface PublicProfile {
   telegram_url: string | null
   profile_photo: string | null
   profile_thumbnail: string | null
+  resume_file: string | null
   experiences: Experience[]
   languages: LanguageType[]
   skills: Skill[]
   educations: Education[]
   projects: Project[]
+}
+
+export interface Endorsement {
+  id: string
+  author_name: string
+  author_title: string | null
+  text: string
+  created_at: string
 }
 
 export interface ProjectWithOwner extends Project {

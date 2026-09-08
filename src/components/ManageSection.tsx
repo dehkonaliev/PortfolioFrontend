@@ -426,11 +426,6 @@ export default function ManageSection({ type, profile, profileOwnerId, onUpdated
           </TimelineList>
         ) : type === 'skills' ? (
           <div className="flex flex-col gap-2">
-            {type === 'skills' && (items as Skill[]).length > 0 && (
-              <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-surface-raised)] px-4 py-3 text-sm text-[var(--text-secondary)]">
-                I know {(items as Skill[]).map((s) => s.name).join(', ')}
-              </div>
-            )}
             {reordering && (
               <div className="mb-1 flex items-center justify-between gap-3 rounded-lg border border-[var(--accent)] bg-[var(--accent-soft)] px-3 py-2">
                 <p className="text-[13px] font-medium text-[var(--accent)]">
@@ -442,45 +437,62 @@ export default function ManageSection({ type, profile, profileOwnerId, onUpdated
               </div>
             )}
 
-            {displayedSkills
-              .slice(0, reordering || skillsExpanded ? displayedSkills.length : SKILLS_PER_PAGE)
-              .map((skill) => (
-              <div
-                key={skill.id}
-                data-skill-id={skill.id}
-              >
-                <ItemCard
-                  isOwner={isOwner}
-                  onEdit={() => openEdit(skill as unknown as Record<string, unknown>)}
-                  onDelete={() => handleDelete(skill.id)}
-                  dragHandle={reordering}
-                  onGripPointerDown={(e) => startDrag(e, skill.id)}
-                >
-                  <RenderItem type={type} item={skill} />
-                </ItemCard>
+            {isOwner ? (
+              /* Owner: editable list with drag-reorder */
+              <>
+                {(items as Skill[]).length > 0 && (
+                  <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-surface-raised)] px-4 py-3 text-sm text-[var(--text-secondary)]">
+                    I know {(items as Skill[]).map((s) => s.name).join(', ')}
+                  </div>
+                )}
+                {displayedSkills
+                  .slice(0, reordering || skillsExpanded ? displayedSkills.length : SKILLS_PER_PAGE)
+                  .map((skill) => (
+                  <div
+                    key={skill.id}
+                    data-skill-id={skill.id}
+                  >
+                    <ItemCard
+                      isOwner={isOwner}
+                      onEdit={() => openEdit(skill as unknown as Record<string, unknown>)}
+                      onDelete={() => handleDelete(skill.id)}
+                      dragHandle={reordering}
+                      onGripPointerDown={(e) => startDrag(e, skill.id)}
+                    >
+                      <RenderItem type={type} item={skill} />
+                    </ItemCard>
+                  </div>
+                ))}
+                {!reordering && !skillsExpanded && displayedSkills.length > SKILLS_PER_PAGE && (
+                  <Button
+                    variant="outline"
+                    className="mt-1 w-full justify-center"
+                    onClick={() => setSkillsExpanded(true)}
+                  >
+                    <ChevronDownIcon className="h-3.5 w-3.5" />
+                    More ({displayedSkills.length - SKILLS_PER_PAGE})
+                  </Button>
+                )}
+                {!reordering && skillsExpanded && displayedSkills.length > SKILLS_PER_PAGE && (
+                  <Button
+                    variant="outline"
+                    className="mt-1 w-full justify-center"
+                    onClick={() => setSkillsExpanded(false)}
+                  >
+                    <ChevronLeftIcon className="h-3.5 w-3.5" />
+                    Show less
+                  </Button>
+                )}
+              </>
+            ) : (
+              /* Visitor: grid with dot indicators */
+              <div className="grid gap-3 sm:grid-cols-2">
+                {displayedSkills.map((skill) => (
+                  <SkillCard key={skill.id} skill={skill} />
+                ))}
               </div>
-            ))}
+            )}
 
-            {!reordering && !skillsExpanded && displayedSkills.length > SKILLS_PER_PAGE && (
-              <Button
-                variant="outline"
-                className="mt-1 w-full justify-center"
-                onClick={() => setSkillsExpanded(true)}
-              >
-                <ChevronDownIcon className="h-3.5 w-3.5" />
-                More ({displayedSkills.length - SKILLS_PER_PAGE})
-              </Button>
-            )}
-            {!reordering && skillsExpanded && displayedSkills.length > SKILLS_PER_PAGE && (
-              <Button
-                variant="outline"
-                className="mt-1 w-full justify-center"
-                onClick={() => setSkillsExpanded(false)}
-              >
-                <ChevronLeftIcon className="h-3.5 w-3.5" />
-                Show less
-              </Button>
-            )}
             {reorderError && (
               <p className="text-sm text-red-500">{reorderError}</p>
             )}
@@ -590,6 +602,32 @@ function EducationMeta({ item }: { item: Education }) {
           {duration}
         </span>
       ) : null}
+    </div>
+  )
+}
+
+function SkillCard({ skill }: { skill: Skill }) {
+  const pct = Math.max(0, Math.min(100, skill.level))
+  const dots = Math.round(pct / 20)
+
+  return (
+    <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-surface-raised)] px-4 py-3">
+      <div className="flex items-center justify-between gap-2">
+        <h3 className="text-sm font-medium text-[var(--text-primary)]">{skill.name}</h3>
+        <div className="flex gap-1" aria-label={`${skillLevelLabel(pct)} — ${pct}%`}>
+          {[1, 2, 3, 4, 5].map((i) => (
+            <span
+              key={i}
+              className={`h-2 w-2 rounded-full transition-colors ${
+                i <= dots
+                  ? 'bg-[var(--accent)]'
+                  : 'bg-[var(--border-subtle)]'
+              }`}
+            />
+          ))}
+        </div>
+      </div>
+      <p className="mt-1 text-xs text-[var(--text-tertiary)]">{skillLevelLabel(pct)}</p>
     </div>
   )
 }

@@ -27,4 +27,8 @@ export {
   ListOrdered as ListOrderedIcon,
   ChevronLeft as ChevronLeftIcon,
   Check as CheckIcon,
+  QrCode as QrCodeIcon,
+  Download as DownloadIcon,
+  Star as StarIcon,
+  Quote as QuoteIcon,
 } from 'lucide-react'

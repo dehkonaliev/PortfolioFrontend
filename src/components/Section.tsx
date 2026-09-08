@@ -21,7 +21,7 @@ export default function Section({ title, icon, isOwner, onAdd, children, extraAc
           <h2 className="text-base font-semibold text-[var(--text-primary)]">{title}</h2>
         </div>
         {isOwner && (
-          <div className="flex items-center gap-2">
+          <div className="print:hidden flex items-center gap-2">
             {extraActions}
             <button
               onClick={onAdd}

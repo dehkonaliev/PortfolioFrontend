@@ -19,6 +19,7 @@ interface ProfileData {
   linkedin_url: string
   telegram_url: string
   profile_photo?: string | null
+  resume_file?: string | null
   username?: string
 }
 
@@ -41,6 +42,8 @@ export default function SettingsPage() {
 
   const [form, setForm] = useState<ProfileData>(EMPTY)
   const [photoFile, setPhotoFile] = useState<File | null>(null)
+  const [resumeFile, setResumeFile] = useState<File | null>(null)
+  const [removeResume, setRemoveResume] = useState(false)
   const [loaded, setLoaded] = useState(false)
   const [message, setMessage] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -65,6 +68,7 @@ export default function SettingsPage() {
           linkedin_url: d.linkedin_url ?? '',
           telegram_url: d.telegram_url ?? '',
           profile_photo: d.profile_photo ?? null,
+          resume_file: d.resume_file ?? null,
           email: d.email ?? '',
           username: d.username,
         })
@@ -100,9 +104,14 @@ export default function SettingsPage() {
       }
 
       let payload: FormData | Record<string, unknown>
-      if (photoFile) {
+      if (photoFile || resumeFile || removeResume) {
         const fd = new FormData()
-        fd.append('profile_photo', photoFile)
+        if (photoFile) fd.append('profile_photo', photoFile)
+        if (resumeFile) {
+          fd.append('resume_file', resumeFile)
+        } else if (removeResume) {
+          fd.append('resume_file', '')
+        }
         for (const [key, value] of Object.entries(textFields)) {
           fd.append(key, String(value ?? ''))
         }
@@ -114,6 +123,8 @@ export default function SettingsPage() {
       await api.patch('/settings', payload)
       await refreshUser()
       setPhotoFile(null)
+      setResumeFile(null)
+      setRemoveResume(false)
       setMessage('Profile saved')
     } catch (err) {
       setError(extractError(err))
@@ -198,6 +209,49 @@ export default function SettingsPage() {
               </Field>
               <Field label="Summary">
                 <Textarea rows={3} value={form.summary} onChange={(e) => set('summary', e.target.value)} />
+              </Field>
+              <Field label="Resume file">
+                <Input
+                  type="file"
+                  accept=".pdf,.doc,.docx,.txt,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                  onChange={(e) => {
+                    setResumeFile(e.target.files?.[0] ?? null)
+                    if (e.target.files?.[0]) setRemoveResume(false)
+                  }}
+                />
+                {resumeFile ? (
+                  <p className="mt-1 text-xs text-[var(--text-tertiary)]">
+                    Selected: {resumeFile.name}
+                  </p>
+                ) : form.resume_file ? (
+                  <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-[var(--text-tertiary)]">
+                    <a
+                      href={getAssetUrl(form.resume_file) ?? '#'}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[var(--accent)] hover:underline"
+                    >
+                      {form.resume_file.split('/').pop()}
+                    </a>
+                    {removeResume ? (
+                      <span className="font-medium text-red-500">will be removed</span>
+                    ) : (
+                      <button
+                        type="button"
+                        className="text-red-500 hover:underline"
+                        onClick={() => {
+                          setRemoveResume(true)
+                          setResumeFile(null)
+                        }}
+                      >
+                        Remove
+                      </button>
+                    )}
+                  </div>
+                ) : null}
+                <p className="mt-1 text-xs text-[var(--text-tertiary)]">
+                  Shown on your resume page via the download button. Max 10MB.
+                </p>
               </Field>
             </div>
           ) : (

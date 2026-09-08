@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import { ThemeProvider } from './context/ThemeContext'
 import Navbar from './components/Navbar'
-import Starfield from './components/Starfield'
+import AmbientBackground from './components/AmbientBackground'
 import HomePage from './pages/HomePage'
 import ResumePage from './pages/ResumePage'
 import ProjectsPage from './pages/ProjectsPage'
@@ -18,7 +18,7 @@ export default function App() {
       <AuthProvider>
         <Router>
           <div className="relative flex min-h-screen flex-col">
-            <Starfield />
+            <AmbientBackground />
             <Navbar />
             <main className="relative z-10 flex-1">
               <Routes>
