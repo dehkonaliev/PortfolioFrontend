@@ -48,7 +48,7 @@ export default function Navbar() {
       <div className="mx-auto flex h-14 max-w-[1200px] items-center justify-between gap-4 px-6">
         <Link to="/" className="flex items-center gap-2.5">
           <img
-            src={theme === 'dark' ? '/favicon-dark/android-chrome-512x512.png' : '/favicon-light/android-chrome-512x512.png'}
+            src={theme === 'dark' ? '/favicon_dark/android-chrome-512x512.png' : '/favicon_light/android-chrome-512x512.png'}
             alt="Portfolio"
             className="h-8 w-8 rounded-lg object-cover"
           />
