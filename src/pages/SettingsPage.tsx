@@ -231,7 +231,7 @@ export default function SettingsPage() {
                       rel="noopener noreferrer"
                       className="text-[var(--accent)] hover:underline"
                     >
-                      {form.resume_file.split('/').pop()}
+                      {form.resume_file.split('/').pop()?.split('?')[0] ?? form.resume_file}
                     </a>
                     {removeResume ? (
                       <span className="font-medium text-red-500">will be removed</span>
