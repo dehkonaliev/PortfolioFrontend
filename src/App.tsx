@@ -32,7 +32,7 @@ export default function App() {
               </Routes>
             </main>
             <footer className="border-t border-[var(--border-subtle)] py-5 text-center text-xs text-[var(--text-tertiary)]">
-              <span>© {new Date().getFullYear()} YourResume.</span>
+              <span>© {new Date().getFullYear()} MyResume.</span>
               {CREATED_BY_LINK && (
                 <>
                   {' '}Created by{' '}

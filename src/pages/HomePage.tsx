@@ -47,7 +47,7 @@ interface FilterForm {
 }
 
 export default function HomePage() {
-  usePageTitle('YourResume — Find talent and projects')
+  usePageTitle('MyResume — Find talent and projects')
   const { user } = useAuth()
   const [searchParams, setSearchParams] = useSearchParams()
 

@@ -8,7 +8,7 @@ import { extractError } from '../lib/errors'
 type Step = 1 | 2 | 3
 
 export default function SignupPage() {
-  usePageTitle('Sign up — YourResume')
+  usePageTitle('Sign up — MyResume')
   const { requestVerification, verifyCode, signup } = useAuth()
   const navigate = useNavigate()
 

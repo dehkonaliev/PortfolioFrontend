@@ -35,7 +35,7 @@ const EMPTY: ProfileData = {
 }
 
 export default function SettingsPage() {
-  usePageTitle('Settings — YourResume')
+  usePageTitle('Settings — MyResume')
   const { user, refreshUser, deleteAccount } = useAuth()
   const navigate = useNavigate()
 

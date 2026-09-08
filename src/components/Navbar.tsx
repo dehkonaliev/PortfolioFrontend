@@ -52,7 +52,7 @@ export default function Navbar() {
             alt="Portfolio"
             className="h-8 w-8 rounded-lg object-cover"
           />
-          <span className="text-sm font-semibold tracking-tight text-[var(--text-primary)]">YourResume</span>
+          <span className="text-sm font-semibold tracking-tight text-[var(--text-primary)]">MyResume</span>
         </Link>
 
         {/* Desktop nav */}

@@ -6,7 +6,7 @@ import { Button, Field, Input } from '../components/ui'
 import { extractError } from '../lib/errors'
 
 export default function LoginPage() {
-  usePageTitle('Sign in — YourResume')
+  usePageTitle('Sign in — MyResume')
   const { login } = useAuth()
   const navigate = useNavigate()
   const [username, setUsername] = useState('')
