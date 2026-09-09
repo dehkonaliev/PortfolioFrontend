@@ -188,6 +188,9 @@ export default function SignupPage() {
                 >
                   Resend or change email
                 </button>
+                <p className="text-center text-xs text-[var(--text-tertiary)]">
+                  Didn't get the code? Check your spam or junk folder — it sometimes lands there.
+                </p>
                 <Button type="submit" className="w-full py-2.5" disabled={loading}>
                   {loading ? 'Verifying...' : 'Verify code'}
                 </Button>
