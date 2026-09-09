@@ -31,4 +31,5 @@ export {
   Download as DownloadIcon,
   Star as StarIcon,
   Quote as QuoteIcon,
+  MessageSquareText as FeedbackIcon,
 } from 'lucide-react'

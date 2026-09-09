@@ -8,6 +8,7 @@ import ManageSection from '../components/ManageSection'
 import ContactsSection from '../components/ContactsSection'
 import SectionNav from '../components/SectionNav'
 import EndorsementsSection from '../components/EndorsementsSection'
+import FeedbackButton from '../components/FeedbackButton'
 import { LoadingScreen, NotFoundState } from '../components/States'
 import { ChevronRightIcon } from '../components/icons-extras'
 import { FolderIcon } from '../components/icons'
@@ -208,6 +209,7 @@ export default function ResumePage() {
         </div>
         </div>
       </div>
+      {isOwner && <FeedbackButton />}
     </div>
   )
 }
