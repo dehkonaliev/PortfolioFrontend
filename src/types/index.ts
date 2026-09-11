@@ -45,6 +45,15 @@ export interface Project {
   created_at: string
 }
 
+export interface SocialLinks {
+  website_url: string | null
+  github_url: string | null
+  linkedin_url: string | null
+  telegram_url: string | null
+  behance_url: string | null
+  figma_url: string | null
+}
+
 export interface PublicProfile {
   id: string
   username: string
@@ -55,8 +64,7 @@ export interface PublicProfile {
   summary: string | null
   address: string | null
   phone_number: string | null
-  linkedin_url: string | null
-  telegram_url: string | null
+  social_links: SocialLinks | null
   profile_photo: string | null
   profile_thumbnail: string | null
   resume_file: string | null

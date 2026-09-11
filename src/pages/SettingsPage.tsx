@@ -16,8 +16,12 @@ interface ProfileData {
   email: string
   address: string
   phone_number: string
+  website_url: string
+  github_url: string
   linkedin_url: string
   telegram_url: string
+  behance_url: string
+  figma_url: string
   profile_photo?: string | null
   resume_file?: string | null
   username?: string
@@ -31,8 +35,12 @@ const EMPTY: ProfileData = {
   email: '',
   address: '',
   phone_number: '',
+  website_url: '',
+  github_url: '',
   linkedin_url: '',
   telegram_url: '',
+  behance_url: '',
+  figma_url: '',
 }
 
 export default function SettingsPage() {
@@ -58,6 +66,7 @@ export default function SettingsPage() {
       .then((res) => {
         if (!active) return
         const d = res.data?.data ?? {}
+        const s = d.social_links ?? {}
         setForm({
           first_name: d.first_name ?? '',
           last_name: d.last_name ?? '',
@@ -65,8 +74,12 @@ export default function SettingsPage() {
           summary: d.summary ?? '',
           address: d.address ?? '',
           phone_number: d.phone_number ?? '',
-          linkedin_url: d.linkedin_url ?? '',
-          telegram_url: d.telegram_url ?? '',
+          website_url: s.website_url ?? '',
+          github_url: s.github_url ?? '',
+          linkedin_url: s.linkedin_url ?? '',
+          telegram_url: s.telegram_url ?? '',
+          behance_url: s.behance_url ?? '',
+          figma_url: s.figma_url ?? '',
           profile_photo: d.profile_photo ?? null,
           resume_file: d.resume_file ?? null,
           email: d.email ?? '',
@@ -99,8 +112,12 @@ export default function SettingsPage() {
         email: form.email,
         address: form.address,
         phone_number: form.phone_number,
+        website_url: form.website_url,
+        github_url: form.github_url,
         linkedin_url: form.linkedin_url,
         telegram_url: form.telegram_url,
+        behance_url: form.behance_url,
+        figma_url: form.figma_url,
       }
 
       let payload: FormData | Record<string, unknown>
@@ -282,18 +299,48 @@ export default function SettingsPage() {
               <Field label="Address">
                 <Input value={form.address} onChange={(e) => set('address', e.target.value)} />
               </Field>
-              <Field label="LinkedIn URL">
+              <Field label="Website URL">
                 <Input
-                  value={form.linkedin_url}
-                  onChange={(e) => set('linkedin_url', e.target.value)}
-                  placeholder="https://linkedin.com/in/..."
+                  value={form.website_url}
+                  onChange={(e) => set('website_url', e.target.value)}
+                  placeholder="https://..."
                 />
               </Field>
-              <Field label="Telegram URL">
+              <div className="grid grid-cols-2 gap-4">
+                <Field label="GitHub URL">
+                  <Input
+                    value={form.github_url}
+                    onChange={(e) => set('github_url', e.target.value)}
+                    placeholder="https://github.com/..."
+                  />
+                </Field>
+                <Field label="LinkedIn URL">
+                  <Input
+                    value={form.linkedin_url}
+                    onChange={(e) => set('linkedin_url', e.target.value)}
+                    placeholder="https://linkedin.com/in/..."
+                  />
+                </Field>
+                <Field label="Telegram URL">
+                  <Input
+                    value={form.telegram_url}
+                    onChange={(e) => set('telegram_url', e.target.value)}
+                    placeholder="https://t.me/..."
+                  />
+                </Field>
+                <Field label="Behance URL">
+                  <Input
+                    value={form.behance_url}
+                    onChange={(e) => set('behance_url', e.target.value)}
+                    placeholder="https://behance.net/..."
+                  />
+                </Field>
+              </div>
+              <Field label="Figma URL">
                 <Input
-                  value={form.telegram_url}
-                  onChange={(e) => set('telegram_url', e.target.value)}
-                  placeholder="https://t.me/..."
+                  value={form.figma_url}
+                  onChange={(e) => set('figma_url', e.target.value)}
+                  placeholder="https://figma.com/@..."
                 />
               </Field>
             </div>

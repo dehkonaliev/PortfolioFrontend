@@ -24,7 +24,19 @@ function computeCompletion(profile: PublicProfile): number {
   if (profile.skills.length > 0) filled++
   if (profile.educations.length > 0) filled++
   if (profile.languages.length > 0) filled++
-  if (profile.email || profile.phone_number || profile.linkedin_url || profile.telegram_url) filled++
+  const socials = profile.social_links
+  if (
+    profile.email ||
+    profile.phone_number ||
+    (socials &&
+      (socials.website_url ||
+        socials.github_url ||
+        socials.linkedin_url ||
+        socials.telegram_url ||
+        socials.behance_url ||
+        socials.figma_url))
+  )
+    filled++
   return Math.round((filled / total) * 100)
 }
 

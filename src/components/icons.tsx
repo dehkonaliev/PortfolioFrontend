@@ -32,4 +32,5 @@ export {
   Star as StarIcon,
   Quote as QuoteIcon,
   MessageSquareText as FeedbackIcon,
+  Share2 as Share2Icon,
 } from 'lucide-react'

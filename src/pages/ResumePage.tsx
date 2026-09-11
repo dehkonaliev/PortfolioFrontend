@@ -5,7 +5,7 @@ import { usePublicProfile } from '../hooks/usePublicProfile'
 import { usePageTitle } from '../hooks/usePageTitle'
 import ProfileHeader from '../components/ProfileHeader'
 import ManageSection from '../components/ManageSection'
-import ContactsSection from '../components/ContactsSection'
+import ContactsSection, { SocialLinksSection } from '../components/ContactsSection'
 import SectionNav from '../components/SectionNav'
 import EndorsementsSection from '../components/EndorsementsSection'
 import FeedbackButton from '../components/FeedbackButton'
@@ -23,7 +23,19 @@ function getVisibleSections(profile: PublicProfile, isOwner: boolean): Set<strin
   if (isOwner || profile.skills.length > 0) sections.add('skills')
   if (isOwner || profile.languages.length > 0) sections.add('languages')
   sections.add('projects')
-  if (profile.email || profile.phone_number || profile.address || profile.linkedin_url || profile.telegram_url) {
+  const socials = profile.social_links
+  if (
+    socials &&
+    (socials.website_url ||
+      socials.github_url ||
+      socials.linkedin_url ||
+      socials.telegram_url ||
+      socials.behance_url ||
+      socials.figma_url)
+  ) {
+    sections.add('social-links')
+  }
+  if (profile.email || profile.phone_number || profile.address) {
     sections.add('contacts')
   }
   return sections
@@ -203,6 +215,9 @@ export default function ResumePage() {
           <div id="endorsements">
             <EndorsementsSection profile={profile} />
           </div>
+
+          {/* Social links */}
+          <SocialLinksSection profile={profile} />
 
           {/* Contacts */}
           <ContactsSection profile={profile} />

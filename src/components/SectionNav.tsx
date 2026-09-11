@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import {
   BriefcaseIcon,
   GraduationIcon,
@@ -6,6 +6,7 @@ import {
   GlobeIcon,
   FolderIcon,
   IdIcon,
+  Share2Icon,
 } from './icons'
 
 interface NavItem {
@@ -21,6 +22,7 @@ const NAV_ITEMS: NavItem[] = [
   { id: 'skills', label: 'Skills', icon: <AwardIcon className="h-4 w-4" />, sectionId: 'skills' },
   { id: 'languages', label: 'Languages', icon: <GlobeIcon className="h-4 w-4" />, sectionId: 'languages' },
   { id: 'projects', label: 'Projects', icon: <FolderIcon className="h-4 w-4" />, sectionId: 'projects' },
+  { id: 'social-links', label: 'Social Links', icon: <Share2Icon className="h-4 w-4" />, sectionId: 'social-links' },
   { id: 'contacts', label: 'Contacts', icon: <IdIcon className="h-4 w-4" />, sectionId: 'contacts' },
 ]
 
@@ -30,22 +32,15 @@ interface SectionNavProps {
 
 export default function SectionNav({ visibleSections }: SectionNavProps) {
   const [active, setActive] = useState<string>('experience')
+  const lockRef = useRef(false)
+  const lockTimer = useRef<number | null>(null)
 
   const filteredItems = NAV_ITEMS.filter((item) => visibleSections.has(item.sectionId))
 
   const handleScroll = useCallback(() => {
-    const navHeight = 80
-    const threshold = navHeight + 40
+    if (lockRef.current) return
 
-    const scrollHeight = document.documentElement.scrollHeight
-    if (window.scrollY + window.innerHeight >= scrollHeight - 8) {
-      const last = filteredItems[filteredItems.length - 1]
-      if (last) {
-        setActive(last.sectionId)
-        return
-      }
-    }
-
+    const threshold = 120
     const offsets: { id: string; top: number }[] = []
     for (const item of filteredItems) {
       const el = document.getElementById(item.sectionId)
@@ -57,26 +52,62 @@ export default function SectionNav({ visibleSections }: SectionNavProps) {
     if (offsets.length === 0) return
 
     let current = offsets[0].id
-    for (const offset of offsets) {
-      if (offset.top <= threshold) {
-        current = offset.id
+    for (const o of offsets) {
+      if (o.top <= threshold) current = o.id
+    }
+
+    const atBottom =
+      window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 8
+
+    if (atBottom) {
+      const lastTop = offsets[offsets.length - 1].top
+      if (lastTop <= window.innerHeight / 2) {
+        // The last section can actually be scrolled into the top half of the
+        // viewport, so the user is reading it.
+        current = offsets[offsets.length - 1].id
+      } else {
+        // The page is too short to scroll the last sections to the top.
+        // Highlight the section sitting at the top of the viewport instead of
+        // snapping to the last nav item (so "Social Links" stays highlighted
+        // instead of jumping to "Contacts").
+        let bestId = offsets[0].id
+        let bestDis = Infinity
+        for (const o of offsets) {
+          const dis = Math.abs(o.top - threshold)
+          if (o.top >= threshold && dis < bestDis) {
+            bestDis = dis
+            bestId = o.id
+          }
+        }
+        current = bestId
       }
     }
+
     setActive(current)
   }, [filteredItems])
 
   useEffect(() => {
     window.addEventListener('scroll', handleScroll, { passive: true })
     handleScroll()
-    return () => window.removeEventListener('scroll', handleScroll)
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      if (lockTimer.current !== null) window.clearTimeout(lockTimer.current)
+    }
   }, [handleScroll])
 
   const scrollTo = (sectionId: string) => {
     const el = document.getElementById(sectionId)
-    if (el) {
-      const y = el.getBoundingClientRect().top + window.scrollY - 80
-      window.scrollTo({ top: y, behavior: 'smooth' })
-    }
+    if (!el) return
+    setActive(sectionId)
+    if (lockTimer.current !== null) window.clearTimeout(lockTimer.current)
+    lockRef.current = true
+    lockTimer.current = window.setTimeout(() => {
+      lockRef.current = false
+      lockTimer.current = null
+      handleScroll()
+    }, 700)
+    const y = el.getBoundingClientRect().top + window.scrollY - 80
+    window.scrollTo({ top: y, behavior: 'smooth' })
   }
 
   if (filteredItems.length === 0) return null
