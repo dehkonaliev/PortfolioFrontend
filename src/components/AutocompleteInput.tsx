@@ -99,10 +99,10 @@ export default function AutocompleteInput({
         onFocus={() => setOpen(true)}
         required={required}
         placeholder={placeholder}
-        className="w-full rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-surface)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder-[var(--text-tertiary)] outline-none transition focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]/20"
+        className="w-full rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elevated)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder-[var(--text-tertiary)] shadow-sm outline-none transition hover:border-[var(--border-strong)] focus:border-[var(--accent)] focus:shadow-[0_0_0_3px_var(--accent-soft)]"
       />
       {open && currentToken.length >= 1 && (
-        <div className="absolute left-0 right-0 top-full z-20 mt-1 max-h-56 overflow-auto rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] py-1 shadow-[var(--shadow-card)]">
+        <div className="popover-pop panel-card absolute left-0 right-0 top-full z-20 mt-1.5 max-h-56 overflow-auto py-1">
           {loading && <div className="px-3 py-2 text-xs text-[var(--text-tertiary)]">Loading...</div>}
           {!loading && suggestions.length === 0 && (
             <div className="px-3 py-2 text-xs text-[var(--text-tertiary)]">No suggestions yet</div>

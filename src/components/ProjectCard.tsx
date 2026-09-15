@@ -12,6 +12,7 @@ interface ProjectCardProps {
   isOwner: boolean
   onEdit: () => void
   onDelete: () => void
+  revealDelay?: string
 }
 
 export default function ProjectCard({
@@ -24,20 +25,21 @@ export default function ProjectCard({
   isOwner,
   onEdit,
   onDelete,
+  revealDelay = '',
 }: ProjectCardProps) {
   const imageSrc = getAssetUrl(coverImage)
   const ownerHref = ownerUsername ? `/${ownerUsername}` : '#'
   const techList = technologies ? technologies.split(',').map((t) => t.trim()).filter(Boolean) : []
 
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] shadow-[var(--shadow-card)] transition-colors hover:border-[var(--border-strong)]">
+    <article className={`panel-card panel-card-hover reveal ${revealDelay} group flex h-full flex-col overflow-hidden`}>
       {/* Cover — full width, 16:9, rounded top */}
       <div className="relative aspect-video w-full shrink-0 overflow-hidden bg-[var(--bg-surface-raised)]">
         {imageSrc ? (
-          <img
+<img
             alt={name}
             loading="lazy"
-            className="h-full w-full object-cover"
+            className="card-image h-full w-full object-cover"
             src={imageSrc}
           />
         ) : (

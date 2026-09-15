@@ -75,7 +75,7 @@ export default function EndorsementsSection({ profile }: { profile: PublicProfil
   if (list.length === 0 && !isOwner) return null
 
   return (
-    <div className="rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] shadow-[var(--shadow-card)]">
+    <div className="panel-card reveal overflow-hidden">
       <div className="flex items-center justify-between gap-3 border-b border-[var(--border-subtle)] px-6 py-4">
         <div className="flex items-center gap-3">
           <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[var(--bg-surface-raised)] text-[var(--text-tertiary)]">
@@ -91,7 +91,7 @@ export default function EndorsementsSection({ profile }: { profile: PublicProfil
         {isOwner && (
           <button
             onClick={() => setModalOpen(true)}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--accent)] px-3 py-1.5 text-[13px] font-semibold text-[#0a0a0b] transition hover:opacity-90 active:scale-[0.98]"
+            className="btn-tactile btn-primary inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[13px] font-semibold text-white transition active:scale-[0.98]"
           >
             <PlusIcon className="h-3.5 w-3.5" />
             Add
@@ -111,8 +111,14 @@ export default function EndorsementsSection({ profile }: { profile: PublicProfil
           </div>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2">
-            {list.map((e) => (
-              <EndorsementCard key={e.id} endorsement={e} canDelete={isOwner} onDelete={() => remove(e.id)} />
+            {list.map((e, i) => (
+              <EndorsementCard
+                key={e.id}
+                endorsement={e}
+                canDelete={isOwner}
+                onDelete={() => remove(e.id)}
+                revealDelay={i < 4 ? `reveal-delay-${i + 1}` : 'reveal-delay-4'}
+              />
             ))}
           </div>
         )}

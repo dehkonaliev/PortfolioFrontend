@@ -5,11 +5,12 @@ interface EndorsementCardProps {
   endorsement: Endorsement
   canDelete?: boolean
   onDelete?: () => void
+  revealDelay?: string
 }
 
-export default function EndorsementCard({ endorsement, canDelete, onDelete }: EndorsementCardProps) {
+export default function EndorsementCard({ endorsement, canDelete, onDelete, revealDelay = '' }: EndorsementCardProps) {
   return (
-    <figure className="flex flex-col gap-3 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface-raised)] p-5">
+    <figure className={`panel-muted panel-card-hover reveal ${revealDelay} flex flex-col gap-3 p-5`}>
       <div className="flex items-center justify-between">
         <QuoteIcon className="h-5 w-5 text-[var(--accent)]" />
         <div className="flex items-center gap-2">

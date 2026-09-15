@@ -54,7 +54,7 @@ export default function FeedbackButton() {
       <button
         onClick={() => setOpen(true)}
         aria-label="Send feedback"
-        className="fixed bottom-6 right-6 z-40 flex items-center gap-2 rounded-full bg-[var(--accent)] px-4 py-2.5 text-sm font-semibold text-[#0a0a0b] shadow-[var(--shadow-card)] transition hover:opacity-90"
+        className="btn-tactile btn-primary fixed bottom-6 right-6 z-40 flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold text-white transition"
       >
         <FeedbackIcon className="h-4 w-4" />
         Feedback

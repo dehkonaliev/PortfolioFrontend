@@ -8,11 +8,12 @@ interface ItemCardProps {
   children: ReactNode
   dragHandle?: boolean
   onGripPointerDown?: (e: React.PointerEvent<HTMLSpanElement>) => void
+  revealDelay?: string
 }
 
-export default function ItemCard({ isOwner, onEdit, onDelete, children, dragHandle = false, onGripPointerDown }: ItemCardProps) {
+export default function ItemCard({ isOwner, onEdit, onDelete, children, dragHandle = false, onGripPointerDown, revealDelay = '' }: ItemCardProps) {
   return (
-    <div className="flex items-start justify-between gap-4 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-surface)] px-5 py-4 transition-colors">
+    <div className={`panel-muted panel-card-hover reveal ${revealDelay} flex items-start justify-between gap-4 px-5 py-4`}>
       {dragHandle && (
         <span
           onPointerDown={onGripPointerDown}

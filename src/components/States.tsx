@@ -21,7 +21,7 @@ export function NotFoundState({ message = 'Nothing here yet.' }: { message?: str
         <p className="mt-1 text-sm text-[var(--text-tertiary)]">The page you're looking for doesn't exist.</p>
         <Link
           to="/"
-          className="mt-5 inline-block rounded-lg bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-[#0a0a0b] transition hover:opacity-90"
+          className="btn-tactile btn-primary mt-5 inline-block rounded-lg px-4 py-2 text-sm font-semibold text-white transition"
         >
           Back to home
         </Link>

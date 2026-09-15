@@ -102,7 +102,7 @@ export default function SignupPage() {
               <div
                 className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold transition ${
                   step >= s.n
-                    ? 'bg-[var(--accent)] text-[#0a0a0b]'
+                    ? 'bg-[var(--accent)] text-white'
                     : 'border border-[var(--border-subtle)] text-[var(--text-tertiary)]'
                 }`}
               >
@@ -122,7 +122,7 @@ export default function SignupPage() {
           ))}
         </div>
 
-        <div className="rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-8 shadow-[var(--shadow-card)]">
+        <div className="panel-card p-8">
           {step === 1 && (
             <>
               <div className="mb-6 text-center">

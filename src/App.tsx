@@ -17,7 +17,7 @@ export default function App() {
     <ThemeProvider>
       <AuthProvider>
         <Router>
-          <div className="relative flex min-h-screen flex-col">
+          <div className="noise-overlay relative flex min-h-screen flex-col">
             <AmbientBackground />
             <Navbar />
             <main className="relative z-10 flex-1">

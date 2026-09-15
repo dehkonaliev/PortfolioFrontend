@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import { usePublicProfile } from '../hooks/usePublicProfile'
 import { usePageTitle } from '../hooks/usePageTitle'
+import { useReveal } from '../hooks/useReveal'
 import ManageSection from '../components/ManageSection'
 import { LoadingScreen, NotFoundState } from '../components/States'
 import { ChevronRightIcon } from '../components/icons-extras'
@@ -12,6 +13,7 @@ export default function ProjectsPage() {
   const { username } = useParams<{ username: string }>()
   const { data: profile, loading, error, refetch } = usePublicProfile(username)
   usePageTitle(username ? `${username}'s Projects` : 'Projects')
+  useReveal()
 
   const handleUpdated = useCallback(() => {
     void refetch({ silent: true })
@@ -36,7 +38,7 @@ export default function ProjectsPage() {
     [profile.job_title, `@${profile.username}`].filter(Boolean).join(' · ')
 
   return (
-    <div className="mx-auto max-w-[1200px] px-6 py-8 max-sm:px-4">
+    <div className="page-enter mx-auto max-w-[1200px] px-6 py-8 max-sm:px-4">
       <Helmet>
         <title>{metaTitle}</title>
         <meta name="description" content={metaDescription} />

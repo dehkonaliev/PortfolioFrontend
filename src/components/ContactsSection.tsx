@@ -78,7 +78,7 @@ export function ContactsSection({ profile }: { profile: PublicProfile }) {
   if (contacts.length === 0) return null
 
   return (
-    <section id="contacts" className="mb-6 mt-6 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-5 shadow-[var(--shadow-card)]">
+    <section id="contacts" className="panel-card reveal mb-6 mt-6 p-5">
       <h2 className="mb-3 text-sm font-semibold text-[var(--text-primary)]">Contacts</h2>
       <RowList rows={contacts} />
     </section>
@@ -115,7 +115,7 @@ export function SocialLinksSection({ profile }: { profile: PublicProfile }) {
   if (links.length === 0) return null
 
   return (
-    <section id="social-links" className="mb-6 mt-6 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-5 shadow-[var(--shadow-card)]">
+    <section id="social-links" className="panel-card reveal mb-6 mt-6 p-5">
       <h2 className="mb-3 text-sm font-semibold text-[var(--text-primary)]">Social Links</h2>
       <RowList rows={links} />
     </section>

@@ -183,7 +183,7 @@ export default function SettingsPage() {
       )}
 
       <form onSubmit={handleSave} className="space-y-6">
-        <section className="rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-6 shadow-[var(--shadow-card)]">
+        <section className="panel-card p-6">
           <h2 className="mb-4 text-base font-semibold text-[var(--text-primary)]">Profile</h2>
           {loaded ? (
             <div className="space-y-4">
@@ -276,7 +276,7 @@ export default function SettingsPage() {
           )}
         </section>
 
-        <section className="rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-6 shadow-[var(--shadow-card)]">
+        <section className="panel-card p-6">
           <h2 className="mb-4 text-base font-semibold text-[var(--text-primary)]">Contacts</h2>
           {loaded ? (
             <div className="space-y-4">

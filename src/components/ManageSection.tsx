@@ -115,6 +115,8 @@ export default function ManageSection({ type, profile, profileOwnerId, onUpdated
   const items = listFromType(profile, type) as unknown[]
   const endpoint = endpointFromType(type)
 
+  const delayClass = (i: number) => (i < 8 ? `reveal-delay-${i + 1}` : 'reveal-delay-8')
+
   const displayedSkills = useMemo(() => {
     if (type !== 'skills') return []
     const sorted = [...(items as Skill[])]
@@ -362,7 +364,7 @@ export default function ManageSection({ type, profile, profileOwnerId, onUpdated
           />
         ) : type === 'projects' ? (
           <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}>
-            {(items as Project[]).map((item) => (
+            {(items as Project[]).map((item, i) => (
               <ProjectCard
                 key={item.id}
                 name={item.name}
@@ -374,6 +376,7 @@ export default function ManageSection({ type, profile, profileOwnerId, onUpdated
                 isOwner={isOwner}
                 onEdit={() => openEdit(item as unknown as Record<string, unknown>)}
                 onDelete={() => handleDelete(item.id)}
+                revealDelay={delayClass(i)}
               />
             ))}
           </div>
@@ -447,7 +450,7 @@ export default function ManageSection({ type, profile, profileOwnerId, onUpdated
                 )}
                 {displayedSkills
                   .slice(0, reordering || skillsExpanded ? displayedSkills.length : SKILLS_PER_PAGE)
-                  .map((skill) => (
+                  .map((skill, i) => (
                   <div
                     key={skill.id}
                     data-skill-id={skill.id}
@@ -458,6 +461,7 @@ export default function ManageSection({ type, profile, profileOwnerId, onUpdated
                       onDelete={() => handleDelete(skill.id)}
                       dragHandle={reordering}
                       onGripPointerDown={(e) => startDrag(e, skill.id)}
+                      revealDelay={reordering ? '' : delayClass(i)}
                     >
                       <RenderItem type={type} item={skill} />
                     </ItemCard>
@@ -487,8 +491,8 @@ export default function ManageSection({ type, profile, profileOwnerId, onUpdated
             ) : (
               /* Visitor: grid with dot indicators */
               <div className="grid gap-3 sm:grid-cols-2">
-                {displayedSkills.map((skill) => (
-                  <SkillCard key={skill.id} skill={skill} />
+                {displayedSkills.map((skill, i) => (
+                  <SkillCard key={skill.id} skill={skill} revealDelay={delayClass(i)} />
                 ))}
               </div>
             )}
@@ -499,12 +503,13 @@ export default function ManageSection({ type, profile, profileOwnerId, onUpdated
           </div>
         ) : (
           <div className="flex flex-col gap-2">
-            {(items as LanguageType[]).map((item) => (
+            {(items as LanguageType[]).map((item, i) => (
               <ItemCard
                 key={item.id}
                 isOwner={isOwner}
                 onEdit={() => openEdit(item as unknown as Record<string, unknown>)}
                 onDelete={() => handleDelete(item.id)}
+                revealDelay={delayClass(i)}
               >
                 <RenderItem type={type} item={item} />
               </ItemCard>
@@ -606,21 +611,22 @@ function EducationMeta({ item }: { item: Education }) {
   )
 }
 
-function SkillCard({ skill }: { skill: Skill }) {
+function SkillCard({ skill, revealDelay = '' }: { skill: Skill; revealDelay?: string }) {
   const pct = Math.max(0, Math.min(100, skill.level))
   const dots = Math.round(pct / 20)
 
   return (
-    <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-surface-raised)] px-4 py-3">
+    <div className={`panel-muted panel-card-hover reveal ${revealDelay} px-4 py-3`}>
       <div className="flex items-center justify-between gap-2">
         <h3 className="text-sm font-medium text-[var(--text-primary)]">{skill.name}</h3>
         <div className="flex gap-1" aria-label={`${skillLevelLabel(pct)} — ${pct}%`}>
           {[1, 2, 3, 4, 5].map((i) => (
             <span
               key={i}
-              className={`h-2 w-2 rounded-full transition-colors ${
+              style={i <= dots ? { animationDelay: `${(i - 1) * 100 + 150}ms` } : undefined}
+              className={`h-2 w-2 rounded-full ${
                 i <= dots
-                  ? 'bg-[var(--accent)]'
+                  ? 'skill-dot-animate bg-[var(--accent)]'
                   : 'bg-[var(--border-subtle)]'
               }`}
             />
@@ -662,7 +668,7 @@ function RenderItem({ type, item }: { type: ResourceType; item: Experience | Lan
           </div>
           <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-[var(--bg-surface-raised)]">
             <div
-              className="h-full rounded-full bg-[var(--accent)]"
+              className="progress-fill-animate h-full rounded-full bg-[var(--accent)]"
               style={{ width: `${pct}%` }}
             />
           </div>

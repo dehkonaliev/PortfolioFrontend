@@ -31,7 +31,7 @@ export default function LoginPage() {
   return (
     <div className="mx-auto flex min-h-[75vh] max-w-sm items-center px-4 py-16">
       <div className="w-full">
-        <div className="rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-8 shadow-[var(--shadow-card)]">
+        <div className="panel-card p-8">
           <div className="mb-6 text-center">
             <h1 className="text-xl font-semibold text-[var(--text-primary)]">Welcome back</h1>
             <p className="mt-1 text-sm text-[var(--text-tertiary)]">

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { usePageTitle } from '../hooks/usePageTitle'
+import { useReveal } from '../hooks/useReveal'
 import MetaTags from '../components/MetaTags'
 import api from '../api/axios'
 import type { SearchUser, SearchProject } from '../types'
@@ -49,6 +50,7 @@ interface FilterForm {
 
 export default function HomePage() {
   usePageTitle('MyResume — Find talent and projects')
+  useReveal()
   const { user } = useAuth()
   const [searchParams, setSearchParams] = useSearchParams()
   const initialTab = (searchParams.get('tab') as Tab) || 'filter'
@@ -161,11 +163,11 @@ export default function HomePage() {
     setSearchParams({})
   }
 
-  const userCard = (u: SearchUser) => (
+  const userCard = (u: SearchUser, i: number) => (
     <Link
       key={u.id}
       to={`/${u.username}`}
-      className="group rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-5 shadow-[var(--shadow-card)] transition-colors hover:border-[var(--border-strong)]"
+      className={`panel-card panel-card-hover reveal ${i < 8 ? `reveal-delay-${i + 1}` : 'reveal-delay-8'} group p-5`}
     >
       <div className="flex items-center gap-3">
         {u.profile_thumbnail || u.profile_photo ? (
@@ -189,7 +191,7 @@ export default function HomePage() {
         </div>
       </div>
       {u.summary && (
-        <p className="mt-3 line-clamp-2 text-[13px] text-[var(--text-secondary)]">{u.summary}</p>
+        <p className="mt-3 line-clamp-2 text-[13px] leading-relaxed text-[var(--text-secondary)]">{u.summary}</p>
       )}
       {u.matched_skills && u.matched_skills.length > 0 && (
         <div className="mt-3 flex flex-wrap gap-1.5">
@@ -209,10 +211,10 @@ export default function HomePage() {
     </Link>
   )
 
-  const projectCard = (p: SearchProject) => (
+  const projectCard = (p: SearchProject, i: number) => (
     <article
       key={p.id}
-      className="group flex h-full flex-col overflow-hidden rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] shadow-[var(--shadow-card)] transition-colors hover:border-[var(--border-strong)]"
+      className={`panel-card panel-card-hover reveal ${i < 8 ? `reveal-delay-${i + 1}` : 'reveal-delay-8'} group flex h-full flex-col overflow-hidden`}
     >
       <div className="relative aspect-video w-full shrink-0 overflow-hidden bg-[var(--bg-surface-raised)]">
         {p.cover_image ? (
@@ -220,7 +222,7 @@ export default function HomePage() {
             src={getAssetUrl(p.cover_image) ?? ''}
             alt={p.name}
             loading="lazy"
-            className="h-full w-full object-cover"
+            className="card-image h-full w-full object-cover"
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center bg-[var(--bg-surface-raised)] text-2xl font-semibold text-[var(--text-tertiary)]">
@@ -235,7 +237,7 @@ export default function HomePage() {
           ) : p.name}
         </h3>
         {p.description && (
-          <p className="line-clamp-2 text-[13px] text-[var(--text-secondary)]">{p.description}</p>
+          <p className="line-clamp-2 text-[13px] leading-relaxed text-[var(--text-secondary)]">{p.description}</p>
         )}
         {p.technologies && (
           <p className="text-xs text-[var(--text-tertiary)]">{p.technologies}</p>
@@ -280,8 +282,8 @@ export default function HomePage() {
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {tab === 'projects'
-              ? (projects as SearchProject[]).map(projectCard)
-              : (list as SearchUser[]).map(userCard)}
+              ? (projects as SearchProject[]).map((p, i) => projectCard(p, i))
+              : (list as SearchUser[]).map((u, i) => userCard(u, i))}
           </div>
         )}
       </section>
@@ -289,7 +291,7 @@ export default function HomePage() {
   }
 
   return (
-    <div>
+    <div className="page-enter">
       <MetaTags
         title="MyResume — Find talent and projects"
         description="Create a stunning resume and project portfolio. Get discovered by employers searching for talent across every field. Built by Maksudbek Dehkonaliev."
@@ -320,21 +322,21 @@ export default function HomePage() {
             {user ? (
               <Link
                 to={`/${user.username}`}
-                className="rounded-lg bg-[var(--accent)] px-6 py-2.5 text-sm font-semibold text-[#0a0a0b] transition hover:opacity-90"
+                className="btn-tactile btn-primary rounded-lg px-6 py-2.5 text-sm font-semibold text-white transition"
               >
                 View my page
               </Link>
             ) : (
               <Link
                 to="/login"
-                className="rounded-lg bg-[var(--accent)] px-6 py-2.5 text-sm font-semibold text-[#0a0a0b] transition hover:opacity-90"
+                className="btn-tactile btn-primary rounded-lg px-6 py-2.5 text-sm font-semibold text-white transition"
               >
                 Get started
               </Link>
             )}
             <Link
               to={user ? `/${user.username}` : '/login'}
-              className="rounded-lg border border-[var(--border-subtle)] bg-transparent px-6 py-2.5 text-sm font-semibold text-[var(--text-secondary)] transition hover:border-[var(--border-strong)] hover:text-[var(--text-primary)]"
+              className="btn-tactile rounded-lg border border-[var(--border-subtle)] bg-transparent px-6 py-2.5 text-sm font-semibold text-[var(--text-secondary)] transition hover:border-[var(--border-strong)] hover:text-[var(--text-primary)]"
             >
               {user ? 'My portfolio' : 'Create portfolio'}
             </Link>
@@ -354,7 +356,7 @@ export default function HomePage() {
                   onClick={() => { setTab(t.id); setSearched(false); setSearchParams({ tab: t.id }) }}
                   className={`rounded-md px-3 py-1.5 text-[13px] font-medium transition ${
                     tab === t.id
-                      ? 'bg-[var(--accent)] text-[#0a0a0b]'
+                      ? 'bg-[var(--accent)] text-white'
                       : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                   }`}
                 >
@@ -401,7 +403,7 @@ export default function HomePage() {
                   else runProjectSearch()
                 }}
                 disabled={searching}
-                className="rounded-lg bg-[var(--accent)] px-5 py-2.5 text-sm font-semibold text-[#0a0a0b] transition hover:opacity-90 disabled:opacity-60"
+                className="btn-tactile btn-primary rounded-lg px-5 py-2.5 text-sm font-semibold text-white transition disabled:opacity-60"
               >
                 {searching ? 'Searching...' : 'Search'}
               </button>
@@ -413,7 +415,7 @@ export default function HomePage() {
       {/* Filter panel */}
       {tab === 'filter' && (
         <section className="mx-auto -mt-4 max-w-3xl px-6 mb-10 max-sm:px-4">
-          <div className="rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-5 shadow-[var(--shadow-card)]">
+          <div className="panel-card p-5">
             <p className="mb-3 text-[11px] font-semibold uppercase tracking-wide text-[var(--text-tertiary)]">
               Filter by (fill any — combined)
             </p>
@@ -467,10 +469,10 @@ export default function HomePage() {
           </div>
 
           <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {FEATURES.map((f) => (
+            {FEATURES.map((f, i) => (
               <div
                 key={f.title}
-                className="rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-5 transition-colors hover:border-[var(--border-strong)]"
+                className={`panel-card panel-card-hover reveal ${i < 8 ? `reveal-delay-${i + 1}` : 'reveal-delay-8'} group p-5`}
               >
                 <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[var(--bg-surface-raised)] text-[var(--text-tertiary)]">
                   {f.icon}
@@ -485,14 +487,14 @@ export default function HomePage() {
 
       {/* CTA */}
       <section className="mx-auto max-w-[1200px] px-6 py-20 max-sm:px-4">
-        <div className="rounded-xl bg-[var(--bg-surface)] border border-[var(--border-subtle)] p-10 text-center shadow-[var(--shadow-card)] sm:p-14">
+        <div className="panel-card reveal p-10 text-center sm:p-14">
           <h2 className="text-2xl font-semibold tracking-tight text-[var(--text-primary)]">Ready to build your portfolio?</h2>
           <p className="mx-auto mt-3 max-w-lg text-[var(--text-secondary)]">
             Join professionals across every field. Create your page in minutes and start getting discovered.
           </p>
           <Link
             to={user ? `/${user.username}` : '/login'}
-            className="mt-7 inline-flex items-center gap-2 rounded-lg bg-[var(--accent)] px-6 py-2.5 text-sm font-semibold text-[#0a0a0b] transition hover:opacity-90"
+            className="btn-tactile btn-primary mt-7 inline-flex items-center gap-2 rounded-lg px-6 py-2.5 text-sm font-semibold text-white transition"
           >
             Create your portfolio →
           </Link>

@@ -44,7 +44,7 @@ export default function Navbar() {
   }
 
   return (
-    <header className="sticky top-0 z-40 border-b border-[var(--border-subtle)] bg-[var(--bg-canvas)]/90">
+    <header className="sticky top-0 z-40 border-b border-[var(--border-subtle)] bg-[var(--bg-canvas)]/85 backdrop-blur-md">
       <div className="mx-auto flex h-14 max-w-[1200px] items-center justify-between gap-4 px-6">
         <Link to="/" className="flex items-center gap-2.5">
           <img
@@ -88,7 +88,7 @@ export default function Navbar() {
                 </button>
 
                 {dropdownOpen && (
-                  <div className="absolute right-0 top-full mt-1 w-48 overflow-hidden rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] py-1 shadow-[var(--shadow-card)]">
+                  <div className="panel-card absolute right-0 top-full mt-1.5 w-48 overflow-hidden py-1">
                     <Link
                       to="/settings"
                       className="flex items-center gap-2.5 px-3.5 py-2 text-sm text-[var(--text-secondary)] transition hover:bg-[var(--bg-surface-raised)] hover:text-[var(--text-primary)]"
@@ -125,7 +125,7 @@ export default function Navbar() {
               </Link>
               <Link
                 to="/signup"
-                className="rounded-lg bg-[var(--accent)] px-3.5 py-1.5 text-sm font-semibold text-[#0a0a0b] transition hover:opacity-90"
+                className="btn-tactile btn-primary rounded-lg px-3.5 py-1.5 text-sm font-semibold text-white transition"
               >
                 Create account
               </Link>
@@ -226,7 +226,7 @@ export default function Navbar() {
                 </Link>
                 <Link
                   to="/signup"
-                  className="block rounded-lg bg-[var(--accent)] px-3 py-2 text-center text-sm font-semibold text-[#0a0a0b]"
+                  className="btn-tactile btn-primary block rounded-lg px-3 py-2 text-center text-sm font-semibold text-white"
                 >
                   Create account
                 </Link>

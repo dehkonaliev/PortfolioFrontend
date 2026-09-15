@@ -37,8 +37,9 @@ export function TimelineList<T extends TimelineEntry>({ items, emptyLabel, child
       {list.map((item, itemIndex) => {
         const isActive = itemIndex === active
         const isLast = itemIndex === list.length - 1
+        const delayClass = itemIndex < 8 ? `reveal-delay-${itemIndex + 1}` : 'reveal-delay-8'
         return (
-          <div key={itemIndex} className="relative pl-5 sm:pl-9">
+          <div key={itemIndex} className={`reveal ${delayClass} relative pl-5 sm:pl-9`}>
             {!isLast && (
               <span className="pointer-events-none absolute bottom-[-20px] left-[5px] top-0 w-px bg-[var(--border-subtle)] sm:bottom-[-28px] sm:left-[13px]" />
             )}

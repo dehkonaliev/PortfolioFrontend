@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import { usePublicProfile } from '../hooks/usePublicProfile'
 import { usePageTitle } from '../hooks/usePageTitle'
+import { useReveal } from '../hooks/useReveal'
 import ProfileHeader from '../components/ProfileHeader'
 import ManageSection from '../components/ManageSection'
 import ContactsSection, { SocialLinksSection } from '../components/ContactsSection'
@@ -46,6 +47,7 @@ export default function ResumePage() {
   const { data: profile, loading, error, refetch } = usePublicProfile(username)
   const { user } = useAuth()
   usePageTitle(username ? `${username}'s Resume` : 'Resume')
+  useReveal()
 
   const handleUpdated = useCallback(
     (options?: { silent?: boolean }) => {
@@ -71,6 +73,7 @@ export default function ResumePage() {
 
   const firstProjects = profile.projects.slice(0, 3)
   const hasMoreProjects = profile.projects.length > 3
+  const projectDelay = (i: number) => (i < 8 ? `reveal-delay-${i + 1}` : 'reveal-delay-8')
 
   const fullName = [profile.first_name, profile.last_name].filter(Boolean).join(' ') || profile.username
   const metaTitle = profile.job_title
@@ -83,7 +86,7 @@ export default function ResumePage() {
     [profile.job_title, `@${profile.username}`].filter(Boolean).join(' · ')
 
   return (
-    <div className="mx-auto max-w-[1200px] px-6 py-8 max-sm:px-4">
+    <div className="page-enter mx-auto max-w-[1200px] px-6 py-10 max-sm:px-4">
       <Helmet>
         <title>{metaTitle}</title>
         <meta name="description" content={metaDescription} />
@@ -105,7 +108,7 @@ export default function ResumePage() {
         <div className="min-w-0 flex-1">
           <ProfileHeader profile={profile} />
 
-        <div className="space-y-6">
+        <div className="space-y-7">
           {/* Experience */}
           {visibleSections.has('experience') && (
             <div id="experience">
@@ -156,7 +159,7 @@ export default function ResumePage() {
 
           {/* Projects — inline previews */}
           <div id="projects">
-            <div className="rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] shadow-[var(--shadow-card)]">
+            <div className="panel-card reveal overflow-hidden">
               <div className="flex items-center justify-between gap-3 border-b border-[var(--border-subtle)] px-6 py-4">
                 <div className="flex items-center gap-3">
                   <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[var(--bg-surface-raised)] text-[var(--text-tertiary)]">
@@ -167,7 +170,7 @@ export default function ResumePage() {
                 {profile.projects.length > 0 && (
                   <Link
                     to={`/${profile.username}/projects`}
-                    className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-[var(--border-subtle)] px-3.5 py-1.5 text-[13px] font-medium text-[var(--text-secondary)] transition hover:border-[var(--border-strong)] hover:text-[var(--text-primary)] print:hidden"
+                    className="btn-tactile inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-[var(--border-subtle)] px-3.5 py-1.5 text-[13px] font-medium text-[var(--text-secondary)] transition hover:border-[var(--border-strong)] hover:text-[var(--text-primary)] print:hidden"
                   >
                     View all
                     <ChevronRightIcon className="h-3.5 w-3.5" />
@@ -179,7 +182,7 @@ export default function ResumePage() {
                   user && user.id === profile.id ? (
                     <Link
                       to={`/${profile.username}/projects`}
-                      className="inline-flex items-center gap-2 rounded-lg bg-[var(--accent)] px-4 py-2 text-[13px] font-semibold text-[#0a0a0b] transition hover:opacity-90 print:hidden"
+                      className="btn-tactile btn-primary inline-flex items-center gap-2 rounded-lg px-4 py-2 text-[13px] font-semibold text-white transition print:hidden"
                     >
                       Add your first project
                     </Link>
@@ -188,10 +191,11 @@ export default function ResumePage() {
                   )
                 ) : (
                   <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                    {firstProjects.map((project) => (
+                    {firstProjects.map((project, i) => (
                       <ProjectPreviewCard
                         key={project.id}
                         project={project}
+                        revealClass={projectDelay(i)}
                       />
                     ))}
                   </div>
@@ -229,20 +233,20 @@ export default function ResumePage() {
   )
 }
 
-function ProjectPreviewCard({ project }: { project: { id: string; name: string; description: string | null; technologies: string | null; cover_image: string | null; url: string | null } }) {
+function ProjectPreviewCard({ project, revealClass = '' }: { project: { id: string; name: string; description: string | null; technologies: string | null; cover_image: string | null; url: string | null }; revealClass?: string }) {
   const techList = project.technologies
     ? project.technologies.split(',').map((t) => t.trim()).filter(Boolean).slice(0, 4)
     : []
   const coverImage = getAssetUrl(project.cover_image)
 
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface-raised)] transition-colors hover:border-[var(--border-strong)]">
+    <article className={`panel-card panel-card-hover reveal ${revealClass} group flex h-full flex-col overflow-hidden`}>
       <div className="relative aspect-video w-full shrink-0 overflow-hidden bg-[var(--bg-surface)]">
         {coverImage ? (
           <img
             alt={project.name}
             loading="lazy"
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            className="card-image h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
             src={coverImage}
           />
         ) : (
@@ -267,7 +271,7 @@ function ProjectPreviewCard({ project }: { project: { id: string; name: string; 
           )}
         </h3>
         {project.description && (
-          <p className="line-clamp-2 text-[13px] text-[var(--text-secondary)]">{project.description}</p>
+          <p className="line-clamp-2 text-[13px] leading-relaxed text-[var(--text-secondary)]">{project.description}</p>
         )}
         {techList.length > 0 && (
           <div className="mt-1 flex flex-wrap gap-1">

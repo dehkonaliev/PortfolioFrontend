@@ -116,7 +116,7 @@ export default function SectionNav({ visibleSections }: SectionNavProps) {
     <>
       {/* Desktop: sticky sidebar */}
       <aside className="no-print sticky top-20 hidden w-48 shrink-0 self-start lg:block" aria-label="Section navigation">
-        <div className="flex flex-col gap-1 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-2 shadow-[var(--shadow-card)]">
+        <div className="panel-card flex flex-col gap-1 p-2">
           {filteredItems.map((item) => (
             <button
               key={item.id}
