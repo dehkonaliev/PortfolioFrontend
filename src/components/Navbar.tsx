@@ -88,7 +88,8 @@ export default function Navbar() {
                 </button>
 
                 {dropdownOpen && (
-                  <div className="panel-card absolute right-0 top-full mt-1.5 w-48 overflow-hidden py-1">
+                  <div className="absolute right-0 top-full z-20 mt-1.5 w-48">
+                    <div className="panel-card w-48 overflow-hidden py-1">
                     <Link
                       to="/settings"
                       className="flex items-center gap-2.5 px-3.5 py-2 text-sm text-[var(--text-secondary)] transition hover:bg-[var(--bg-surface-raised)] hover:text-[var(--text-primary)]"
@@ -111,6 +112,7 @@ export default function Navbar() {
                       <LogoutIcon className="h-4 w-4" />
                       Logout
                     </button>
+                    </div>
                   </div>
                 )}
               </div>
