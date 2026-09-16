@@ -24,7 +24,7 @@ function prefersReduced(): boolean {
  */
 export function useTypewriter(
   fullText: string,
-  { charSpeed = 35, holdDuration = 2400, clearSpeed = 18, resetDelay = 700 }: TypewriterOptions = {},
+  { charSpeed = 55, holdDuration = 2400, clearSpeed = 30, resetDelay = 700 }: TypewriterOptions = {},
 ) {
   const [count, setCount] = useState(prefersReduced() ? fullText.length : 0)
   const [phase, setPhase] = useState<TypewriterPhase>(() =>

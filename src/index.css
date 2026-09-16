@@ -138,11 +138,6 @@ body {
   to { opacity: 1; }
 }
 
-@keyframes typewriterCursor {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
-}
-
 @keyframes dotFillIn {
   from {
     transform: scale(0);
@@ -352,12 +347,11 @@ body {
     0 8px 22px -4px var(--accent);
 }
 
-/* Typewriter cursor */
-.typewriter-cursor::after {
-  content: '|';
-  animation: typewriterCursor 700ms step-end infinite;
-  margin-left: 1px;
-  font-weight: 300;
+/* Typewriter job title text */
+.fire-text {
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-weight: 900;
   color: var(--accent);
 }
 
@@ -482,10 +476,6 @@ body {
   }
   .avatar-tilt {
     transition: none;
-  }
-  .typewriter-cursor::after {
-    animation: none;
-    content: '';
   }
   .skill-dot-animate {
     animation: none;

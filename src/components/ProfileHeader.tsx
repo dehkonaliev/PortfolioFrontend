@@ -7,7 +7,6 @@ import { useAuth } from '../context/AuthContext'
 import { useTypewriter } from '../hooks/useTypewriter'
 import Modal from './Modal'
 import {
-  BriefcaseIcon,
   CloseIcon,
   LinkIcon,
   CheckIcon,
@@ -123,12 +122,16 @@ export default function ProfileHeader({ profile }: { profile: PublicProfile }) {
               </h1>
               <p className="mt-0.5 text-sm text-[var(--text-tertiary)]">@{profile.username}</p>
               {profile.job_title && (
-                <span className="mt-1.5 inline-flex items-center gap-1 text-xs font-medium text-[var(--accent)]">
-                  <BriefcaseIcon className="h-3.5 w-3.5" />
-                  <span className="relative inline-block pr-[0.6em]">
-                    <span className="invisible" aria-hidden="true">{profile.job_title}</span>
-                    <span className={`absolute inset-0 ${typeCursor ? 'typewriter-cursor' : ''}`} aria-label={profile.job_title}>
+                <span className="mt-1.5 text-sm">
+                  <span className="relative inline-block whitespace-nowrap">
+                    <span className="invisible fire-text" aria-hidden="true">{profile.job_title}</span>
+                    <span className="absolute inset-0 fire-text" aria-label={profile.job_title}>
                       {typedTitle}
+                      <img
+                        src="/loaders/fire.svg"
+                        alt=""
+                        className={`ml-1 inline-block h-[1.56em] w-[0.9em] align-baseline motion-reduce:hidden ${typeCursor ? '' : 'invisible'}`}
+                      />
                     </span>
                   </span>
                 </span>
